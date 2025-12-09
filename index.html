@@ -433,16 +433,20 @@
                 </div>
                 
                 <div class="contact-form-container">
-                   <!-- REEMPLAZA tu formulario actual con esto: -->
-<form id="contactForm" class="contact-form" action="mailto:bravocv90@gmail.com" method="post" enctype="text/plain">
+
+<form id="contactForm" class="contact-form" name="contactForm" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+    <p class="hidden">
+        <label>No llenar este campo si eres humano: <input name="bot-field"></label>
+    </p>
+    
     <div class="form-group">
         <label for="name">Nombre completo *</label>
-        <input type="text" id="name" name="name" placeholder="Tu nombre" required>
+        <input type="text" id="name" name="name" placeholder="Tu nombre" required autocomplete="name">
     </div>
     
     <div class="form-group">
         <label for="email">Email *</label>
-        <input type="email" id="email" name="email" placeholder="tu@email.com" required>
+        <input type="email" id="email" name="email" placeholder="tu@email.com" required autocomplete="email">
     </div>
     
     <div class="form-group">
@@ -458,18 +462,19 @@
     
     <div class="form-group">
         <label for="message">Detalles del proyecto *</label>
-        <textarea id="message" name="message" rows="5" placeholder="Describe tu proyecto, necesidades y presupuesto aproximado..." required></textarea>
+        <textarea id="message" name="message" rows="5" placeholder="Describe tu proyecto, necesidades y presupuesto aproximado..." required autocomplete="off"></textarea>
     </div>
+    
+    <input type="hidden" name="form-name" value="contactForm">
     
     <button type="submit" class="btn btn-primary btn-block">
         <i class="fas fa-paper-plane"></i> Enviar mensaje
     </button>
     
     <p class="form-note">
-        <i class="fas fa-lock"></i> Tu información está segura. No comparto datos con terceros.
+        <i class="fas fa-lock"></i> Tu información está segura. Formulario protegido por Netlify.
     </p>
-</form>
-                </div>
+</form>                </div>
             </div>
         </div>
     </section>

@@ -1229,3 +1229,10 @@ img {
         padding: 0 15px;
     }
 }
+.hidden {
+    display: none;
+    visibility: hidden;
+    opacity: 0;
+    height: 0;
+    overflow: hidden;
+}

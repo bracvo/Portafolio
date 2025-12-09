@@ -30,7 +30,16 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Formulario de contacto
+/*
+// Formulario de contacto (COMENTADO - Ahora usa Netlify Forms)
+const contactForm = document.getElementById('contactForm');
+if (contactForm) {
+    contactForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        // ... todo el código antiguo
+    });
+}
+
     const contactForm = document.getElementById('contactForm');
     if (contactForm) {
         contactForm.addEventListener('submit', function(e) {
@@ -114,7 +123,8 @@ document.addEventListener('DOMContentLoaded', function() {
             }, 1500);
         });
     }
-    
+    */
+   
     // Animación de barras de habilidades al hacer scroll
     const skillItems = document.querySelectorAll('.skill-item');
     const skillObserver = new IntersectionObserver((entries) => {
