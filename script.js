@@ -29,11 +29,95 @@ document.addEventListener('DOMContentLoaded', function() {
             icon.classList.add('fa-bars');
         });
     });
+    document.addEventListener('DOMContentLoaded', function() {
+    // ============================================
+    // DETECTAR SI EL FORMULARIO SE ENVIÓ EXITOSAMENTE
+    // ============================================
     
-// Formulario Netlify - Funcionalidad básica
-document.addEventListener('DOMContentLoaded', function() {
+    // Verificar si viene de un envío exitoso (por parámetro URL)
+    const urlParams = new URLSearchParams(window.location.search);
+    const formSuccess = urlParams.get('form');
+    
+    if (formSuccess === 'success') {
+        // Mostrar mensaje de éxito
+        showSuccessMessage();
+        
+        // Limpiar la URL (opcional, para que no se vea el parámetro)
+        window.history.replaceState({}, document.title, window.location.pathname + window.location.hash);
+    }
+    
+    function showSuccessMessage() {
+        // Crear el mensaje
+        const successMsg = document.createElement('div');
+        successMsg.className = 'form-success-message';
+        successMsg.innerHTML = `
+            <div style="
+                background: rgba(16, 185, 129, 0.15);
+                border: 2px solid #10b981;
+                border-radius: 12px;
+                padding: 20px;
+                margin: 25px 0;
+                text-align: center;
+                animation: fadeIn 0.5s ease;
+            ">
+                <div style="font-size: 3rem; color: #10b981; margin-bottom: 15px;">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h3 style="color: #10b981; margin-bottom: 10px;">¡Mensaje Enviado Exitosamente!</h3>
+                <p style="color: #64748b; margin-bottom: 15px;">
+                    He recibido tu mensaje y te contactaré en menos de 24 horas hábiles.
+                </p>
+                <p style="font-size: 0.9rem; color: #94a3b8;">
+                    <i class="fas fa-clock"></i> Tiempo de respuesta: ≤ 24 horas
+                </p>
+            </div>
+        `;
+        
+        // Insertar en la sección de contacto
+        const contactSection = document.getElementById('contacto');
+        if (contactSection) {
+            const contactContainer = contactSection.querySelector('.contact-container');
+            if (contactContainer) {
+                contactContainer.insertBefore(successMsg, contactContainer.firstChild);
+                
+                // Desplazar suavemente al mensaje
+                setTimeout(() => {
+                    successMsg.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 300);
+                
+                // Eliminar después de 15 segundos (opcional)
+                setTimeout(() => {
+                    successMsg.style.opacity = '0';
+                    successMsg.style.transition = 'opacity 0.5s ease';
+                    setTimeout(() => {
+                        if (successMsg.parentNode) {
+                            successMsg.parentNode.removeChild(successMsg);
+                        }
+                    }, 500);
+                }, 15000);
+            }
+        }
+        
+        // Agregar estilos CSS para la animación
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(-20px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+            
+            .form-success-message {
+                animation: fadeIn 0.5s ease;
+            }
+        `;
+        document.head.appendChild(style);
+    }
+    
+    // ============================================
+    // FORMULARIO - FEEDBACK VISUAL
+    // ============================================
+    
     const contactForm = document.getElementById('contactForm');
-    
     if (contactForm) {
         // Feedback visual al enviar
         contactForm.addEventListener('submit', function() {
@@ -50,38 +134,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 }, 10000);
             }
         });
-        
-        // Verificar si viene de un envío exitoso
-        if (window.location.search.includes('success=true')) {
-            // Mostrar mensaje de éxito
-            const successMsg = document.createElement('div');
-            successMsg.className = 'form-success-message';
-            successMsg.innerHTML = `
-                <div style="
-                    background: rgba(16, 185, 129, 0.1);
-                    border: 1px solid #10b981;
-                    border-radius: 10px;
-                    padding: 15px;
-                    margin-top: 20px;
-                    text-align: center;
-                ">
-                    <i class="fas fa-check-circle" style="color: #10b981; margin-right: 10px;"></i>
-                    <strong>¡Mensaje enviado!</strong> Te contactaré en menos de 24 horas.
-                </div>
-            `;
-            
-            // Insertar después del formulario
-            contactForm.parentNode.insertBefore(successMsg, contactForm.nextSibling);
-            
-            // Desplazarse al formulario
-            setTimeout(() => {
-                contactForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }, 300);
-        }
     }
     
-    // ... el resto de tu JavaScript (menú, animaciones, etc.) ...
-});    // Animación de barras de habilidades al hacer scroll
+});
+
+   // Animación de barras de habilidades al hacer scroll
     const skillItems = document.querySelectorAll('.skill-item');
     const skillObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
