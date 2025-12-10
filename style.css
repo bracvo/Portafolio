@@ -1236,3 +1236,24 @@ img {
     height: 0;
     overflow: hidden;
 }
+/* Estilos para mensaje de éxito del formulario */
+#form-success-message {
+    animation: slideDown 0.5s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Para la transición de desaparición */
+#form-success-message.fade-out {
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}

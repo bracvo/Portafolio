@@ -29,88 +29,95 @@ document.addEventListener('DOMContentLoaded', function() {
             icon.classList.add('fa-bars');
         });
     });
-    document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function() {
     // ============================================
-    // DETECTAR SI EL FORMULARIO SE ENVIÓ EXITOSAMENTE
+    // DETECTAR SI VENIMOS DE UN ENVÍO EXITOSO
     // ============================================
     
-    // Verificar si viene de un envío exitoso (por parámetro URL)
-    const urlParams = new URLSearchParams(window.location.search);
-    const formSuccess = urlParams.get('form');
-    
-    if (formSuccess === 'success') {
-        // Mostrar mensaje de éxito
-        showSuccessMessage();
+    // Verificar si estamos en la página de éxito
+    if (window.location.pathname === '/contact-success' || 
+        window.location.pathname === '/contact-success/') {
         
-        // Limpiar la URL (opcional, para que no se vea el parámetro)
-        window.history.replaceState({}, document.title, window.location.pathname + window.location.hash);
+        // Redirigir a la sección de contacto con hash
+        setTimeout(() => {
+            window.location.href = '/#contacto';
+        }, 100);
+        
+        // Mostrar mensaje después de redirigir
+        setTimeout(showSuccessMessage, 500);
     }
     
+    // Función para mostrar mensaje de éxito
     function showSuccessMessage() {
-        // Crear el mensaje
-        const successMsg = document.createElement('div');
-        successMsg.className = 'form-success-message';
-        successMsg.innerHTML = `
+        // Verificar que estamos en la sección de contacto
+        if (!window.location.hash.includes('contacto')) return;
+        
+        // Crear mensaje
+        const successDiv = document.createElement('div');
+        successDiv.id = 'form-success-message';
+        successDiv.innerHTML = `
             <div style="
-                background: rgba(16, 185, 129, 0.15);
+                background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(59, 130, 246, 0.15));
                 border: 2px solid #10b981;
                 border-radius: 12px;
-                padding: 20px;
-                margin: 25px 0;
+                padding: 25px;
+                margin: 20px 0;
                 text-align: center;
-                animation: fadeIn 0.5s ease;
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             ">
-                <div style="font-size: 3rem; color: #10b981; margin-bottom: 15px;">
+                <div style="font-size: 3.5rem; color: #10b981; margin-bottom: 15px;">
                     <i class="fas fa-check-circle"></i>
                 </div>
-                <h3 style="color: #10b981; margin-bottom: 10px;">¡Mensaje Enviado Exitosamente!</h3>
-                <p style="color: #64748b; margin-bottom: 15px;">
-                    He recibido tu mensaje y te contactaré en menos de 24 horas hábiles.
+                <h3 style="color: #10b981; margin-bottom: 10px; font-size: 1.5rem;">
+                    ¡Mensaje Enviado Correctamente!
+                </h3>
+                <p style="color: #475569; margin-bottom: 15px; line-height: 1.6;">
+                    <strong>Gracias por contactarme.</strong> He recibido tu mensaje y 
+                    te responderé en menos de 24 horas hábiles.
                 </p>
-                <p style="font-size: 0.9rem; color: #94a3b8;">
-                    <i class="fas fa-clock"></i> Tiempo de respuesta: ≤ 24 horas
-                </p>
+                <div style="
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 8px;
+                    background: rgba(59, 130, 246, 0.1);
+                    padding: 8px 16px;
+                    border-radius: 20px;
+                    margin-top: 10px;
+                ">
+                    <i class="fas fa-clock" style="color: #3b82f6;"></i>
+                    <span style="color: #3b82f6; font-size: 0.9rem;">
+                        Tiempo de respuesta: ≤ 24 horas
+                    </span>
+                </div>
             </div>
         `;
         
         // Insertar en la sección de contacto
         const contactSection = document.getElementById('contacto');
         if (contactSection) {
+            // Buscar el contenedor del formulario
             const contactContainer = contactSection.querySelector('.contact-container');
             if (contactContainer) {
-                contactContainer.insertBefore(successMsg, contactContainer.firstChild);
+                // Insertar al inicio del contenedor
+                contactContainer.insertBefore(successDiv, contactContainer.firstChild);
                 
-                // Desplazar suavemente al mensaje
+                // Desplazar suavemente
                 setTimeout(() => {
-                    successMsg.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    successDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 }, 300);
                 
-                // Eliminar después de 15 segundos (opcional)
+                // Eliminar después de 10 segundos
                 setTimeout(() => {
-                    successMsg.style.opacity = '0';
-                    successMsg.style.transition = 'opacity 0.5s ease';
+                    successDiv.style.opacity = '0';
+                    successDiv.style.transition = 'opacity 0.5s ease';
                     setTimeout(() => {
-                        if (successMsg.parentNode) {
-                            successMsg.parentNode.removeChild(successMsg);
+                        if (successDiv.parentNode) {
+                            successDiv.parentNode.removeChild(successDiv);
                         }
                     }, 500);
-                }, 15000);
+                }, 10000);
             }
         }
-        
-        // Agregar estilos CSS para la animación
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes fadeIn {
-                from { opacity: 0; transform: translateY(-20px); }
-                to { opacity: 1; transform: translateY(0); }
-            }
-            
-            .form-success-message {
-                animation: fadeIn 0.5s ease;
-            }
-        `;
-        document.head.appendChild(style);
     }
     
     // ============================================
@@ -127,15 +134,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
                 submitBtn.disabled = true;
                 
-                // Restaurar después de 10 segundos (por si hay error)
+                // Restaurar después de 8 segundos (por si hay error)
                 setTimeout(() => {
                     submitBtn.innerHTML = originalText;
                     submitBtn.disabled = false;
-                }, 10000);
+                }, 8000);
             }
         });
     }
     
+   
 });
 
    // Animación de barras de habilidades al hacer scroll

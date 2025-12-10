@@ -437,12 +437,12 @@
     
     <div class="form-group">
         <label for="name">Nombre completo *</label>
-        <input type="text" id="name" name="name" placeholder="Tu nombre" required autocomplete="name">
+        <input type="text" id="name" name="name" placeholder="Tu nombre" required>
     </div>
     
     <div class="form-group">
         <label for="email">Email *</label>
-        <input type="email" id="email" name="email" placeholder="tu@email.com" required autocomplete="email">
+        <input type="email" id="email" name="email" placeholder="tu@email.com" required>
     </div>
     
     <div class="form-group">
@@ -461,8 +461,10 @@
         <textarea id="message" name="message" rows="5" placeholder="Describe tu proyecto, necesidades y presupuesto aproximado..." required></textarea>
     </div>
     
-    <input type="hidden" name="_redirect" value="https://cj-dev-portfolio.netlify.app/#contacto?form=success">
+    <!-- IMPORTANTE: Redirección SIN parámetros -->
+    <input type="hidden" name="_redirect" value="/contact-success">
     
+    <!-- Campo oculto para Netlify -->
     <input type="hidden" name="form-name" value="contact">
     
     <button type="submit" class="btn btn-primary btn-block">
