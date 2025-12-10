@@ -433,16 +433,16 @@
                 </div>
                 
                 <div class="contact-form-container">
-<form id="contactForm" class="contact-form" name="contact" method="POST" data-netlify="true">
+<form id="contactForm" class="contact-form" name="contact" method="POST" netlify>
     
     <div class="form-group">
         <label for="name">Nombre completo *</label>
-        <input type="text" id="name" name="name" placeholder="Tu nombre" required>
+        <input type="text" id="name" name="name" placeholder="Tu nombre" required autocomplete="name">
     </div>
     
     <div class="form-group">
         <label for="email">Email *</label>
-        <input type="email" id="email" name="email" placeholder="tu@email.com" required>
+        <input type="email" id="email" name="email" placeholder="tu@email.com" required autocomplete="email">
     </div>
     
     <div class="form-group">
@@ -461,20 +461,18 @@
         <textarea id="message" name="message" rows="5" placeholder="Describe tu proyecto, necesidades y presupuesto aproximado..." required></textarea>
     </div>
     
-    <input type="hidden" name="_redirect" value="https://cj-dev-portfolio.netlify.app/#contacto">
+    <!-- IMPORTANTE: Campo oculto para Netlify -->
+    <input type="hidden" name="form-name" value="contact">
     
     <button type="submit" class="btn btn-primary btn-block">
         <i class="fas fa-paper-plane"></i> Enviar mensaje
     </button>
     
     <p class="form-note">
-        <i class="fas fa-lock"></i> Tu información está segura.
+        <i class="fas fa-lock"></i> Formulario seguro con Netlify Forms.
     </p>
-</form>
-    
-    
-    
-    
+</form>   
+
             </div>
         </div>
     </section>
