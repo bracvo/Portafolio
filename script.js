@@ -30,101 +30,19 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-/*
-// Formulario de contacto (COMENTADO - Ahora usa Netlify Forms)
+
 const contactForm = document.getElementById('contactForm');
 if (contactForm) {
-    contactForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        // ... todo el código antiguo
-    });
-}
-
-    const contactForm = document.getElementById('contactForm');
-    if (contactForm) {
-        contactForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const submitBtn = this.querySelector('button[type="submit"]');
+    // Solo feedback visual
+    contactForm.addEventListener('submit', function() {
+        const submitBtn = this.querySelector('button[type="submit"]');
+        if (submitBtn) {
             const originalText = submitBtn.innerHTML;
-            const originalWidth = submitBtn.offsetWidth;
-            
-            // Mantener el ancho del botón
-            submitBtn.style.width = originalWidth + 'px';
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
             submitBtn.disabled = true;
-            
-            // Simulación de envío (en producción usarías fetch/AJAX)
-            setTimeout(() => {
-                // Mostrar mensaje de éxito
-                const successMsg = document.createElement('div');
-                successMsg.className = 'form-success';
-                successMsg.innerHTML = `
-                    <i class="fas fa-check-circle"></i>
-                    <div>
-                        <h4>¡Mensaje enviado!</h4>
-                        <p>Te contactaré en menos de 24 horas.</p>
-                    </div>
-                `;
-                
-                // Estilos para el mensaje de éxito
-                const style = document.createElement('style');
-                style.textContent = `
-                    .form-success {
-                        background-color: rgba(16, 185, 129, 0.1);
-                        border: 1px solid #10b981;
-                        border-radius: 10px;
-                        padding: 20px;
-                        display: flex;
-                        align-items: center;
-                        gap: 15px;
-                        margin-top: 20px;
-                        animation: fadeIn 0.5s ease;
-                    }
-                    
-                    .form-success i {
-                        color: #10b981;
-                        font-size: 2rem;
-                    }
-                    
-                    .form-success h4 {
-                        color: #10b981;
-                        margin-bottom: 5px;
-                    }
-                    
-                    .form-success p {
-                        color: #94a3b8;
-                        font-size: 0.9rem;
-                    }
-                    
-                    @keyframes fadeIn {
-                        from { opacity: 0; transform: translateY(10px); }
-                        to { opacity: 1; transform: translateY(0); }
-                    }
-                `;
-                document.head.appendChild(style);
-                
-                // Insertar mensaje después del formulario
-                contactForm.parentNode.insertBefore(successMsg, contactForm.nextSibling);
-                
-                // Restaurar botón
-                submitBtn.innerHTML = originalText;
-                submitBtn.disabled = false;
-                submitBtn.style.width = '';
-                
-                // Limpiar formulario
-                contactForm.reset();
-                
-                // Eliminar mensaje después de 5 segundos
-                setTimeout(() => {
-                    successMsg.remove();
-                    style.remove();
-                }, 5000);
-            }, 1500);
-        });
-    }
-    */
-   
+        }
+    });
+}
     // Animación de barras de habilidades al hacer scroll
     const skillItems = document.querySelectorAll('.skill-item');
     const skillObserver = new IntersectionObserver((entries) => {
