@@ -31,117 +31,63 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 document.addEventListener('DOMContentLoaded', function() {
     // ============================================
-    // DETECTAR SI VENIMOS DE UN ENVÍO EXITOSO
-    // ============================================
-    
-    // Verificar si estamos en la página de éxito
-    if (window.location.pathname === '/contact-success' || 
-        window.location.pathname === '/contact-success/') {
-        
-        // Redirigir a la sección de contacto con hash
-        setTimeout(() => {
-            window.location.href = '/#contacto';
-        }, 100);
-        
-        // Mostrar mensaje después de redirigir
-        setTimeout(showSuccessMessage, 500);
-    }
-    
-    // Función para mostrar mensaje de éxito
-    function showSuccessMessage() {
-        // Verificar que estamos en la sección de contacto
-        if (!window.location.hash.includes('contacto')) return;
-        
-        // Crear mensaje
-        const successDiv = document.createElement('div');
-        successDiv.id = 'form-success-message';
-        successDiv.innerHTML = `
-            <div style="
-                background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(59, 130, 246, 0.15));
-                border: 2px solid #10b981;
-                border-radius: 12px;
-                padding: 25px;
-                margin: 20px 0;
-                text-align: center;
-                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            ">
-                <div style="font-size: 3.5rem; color: #10b981; margin-bottom: 15px;">
-                    <i class="fas fa-check-circle"></i>
-                </div>
-                <h3 style="color: #10b981; margin-bottom: 10px; font-size: 1.5rem;">
-                    ¡Mensaje Enviado Correctamente!
-                </h3>
-                <p style="color: #475569; margin-bottom: 15px; line-height: 1.6;">
-                    <strong>Gracias por contactarme.</strong> He recibido tu mensaje y 
-                    te responderé en menos de 24 horas hábiles.
-                </p>
-                <div style="
-                    display: inline-flex;
-                    align-items: center;
-                    gap: 8px;
-                    background: rgba(59, 130, 246, 0.1);
-                    padding: 8px 16px;
-                    border-radius: 20px;
-                    margin-top: 10px;
-                ">
-                    <i class="fas fa-clock" style="color: #3b82f6;"></i>
-                    <span style="color: #3b82f6; font-size: 0.9rem;">
-                        Tiempo de respuesta: ≤ 24 horas
-                    </span>
-                </div>
-            </div>
-        `;
-        
-        // Insertar en la sección de contacto
-        const contactSection = document.getElementById('contacto');
-        if (contactSection) {
-            // Buscar el contenedor del formulario
-            const contactContainer = contactSection.querySelector('.contact-container');
-            if (contactContainer) {
-                // Insertar al inicio del contenedor
-                contactContainer.insertBefore(successDiv, contactContainer.firstChild);
-                
-                // Desplazar suavemente
-                setTimeout(() => {
-                    successDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }, 300);
-                
-                // Eliminar después de 10 segundos
-                setTimeout(() => {
-                    successDiv.style.opacity = '0';
-                    successDiv.style.transition = 'opacity 0.5s ease';
-                    setTimeout(() => {
-                        if (successDiv.parentNode) {
-                            successDiv.parentNode.removeChild(successDiv);
-                        }
-                    }, 500);
-                }, 10000);
-            }
-        }
-    }
-    
-    // ============================================
-    // FORMULARIO - FEEDBACK VISUAL
+    // FORMULARIO SIMPLE - SIN REDIRECCIONES COMPLEJAS
     // ============================================
     
     const contactForm = document.getElementById('contactForm');
     if (contactForm) {
-        // Feedback visual al enviar
         contactForm.addEventListener('submit', function() {
             const submitBtn = this.querySelector('button[type="submit"]');
             if (submitBtn) {
-                const originalText = submitBtn.innerHTML;
+                // Guardar que se está enviando
+                localStorage.setItem('formSubmitting', 'true');
+                
+                // Mostrar spinner
                 submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
                 submitBtn.disabled = true;
-                
-                // Restaurar después de 8 segundos (por si hay error)
-                setTimeout(() => {
-                    submitBtn.innerHTML = originalText;
-                    submitBtn.disabled = false;
-                }, 8000);
             }
         });
     }
+    
+    // Verificar si acabamos de cargar la página después de un envío
+    if (localStorage.getItem('formSubmitting') === 'true') {
+        localStorage.removeItem('formSubmitting');
+        
+        // Esperar un momento y mostrar mensaje
+        setTimeout(() => {
+            const successMsg = document.createElement('div');
+            successMsg.innerHTML = `
+                <div style="
+                    background: rgba(16, 185, 129, 0.15);
+                    border: 2px solid #10b981;
+                    border-radius: 12px;
+                    padding: 20px;
+                    margin: 20px 0;
+                    text-align: center;
+                ">
+                    <i class="fas fa-check-circle" style="color: #10b981; font-size: 2rem; margin-bottom: 10px;"></i>
+                    <h4 style="color: #10b981; margin-bottom: 10px;">¡Mensaje Enviado!</h4>
+                    <p style="color: #475569;">Te contactaré en menos de 24 horas.</p>
+                </div>
+            `;
+            
+            // Insertar en la sección de contacto si existe
+            const contactSection = document.getElementById('contacto');
+            if (contactSection) {
+                const contactContainer = contactSection.querySelector('.contact-container');
+                if (contactContainer) {
+                    contactContainer.insertBefore(successMsg, contactContainer.firstChild);
+                    
+                    // Desplazar a la sección
+                    setTimeout(() => {
+                        contactSection.scrollIntoView({ behavior: 'smooth' });
+                    }, 300);
+                }
+            }
+        }, 1000);
+    }
+    
+    // ... resto de tu JavaScript ...
 });
 
    // Animación de barras de habilidades al hacer scroll
