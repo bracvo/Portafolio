@@ -30,64 +30,209 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 document.addEventListener('DOMContentLoaded', function() {
-    // ============================================
-    // FORMULARIO SIMPLE - SIN REDIRECCIONES COMPLEJAS
-    // ============================================
+ 
     
     const contactForm = document.getElementById('contactForm');
+    
     if (contactForm) {
-        contactForm.addEventListener('submit', function() {
+        contactForm.addEventListener('submit', async function(e) {
+            e.preventDefault(); // Prevenir envío normal
+            
             const submitBtn = this.querySelector('button[type="submit"]');
-            if (submitBtn) {
-                // Guardar que se está enviando
-                localStorage.setItem('formSubmitting', 'true');
+            const originalText = submitBtn.innerHTML;
+            
+            // Mostrar spinner
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
+            submitBtn.disabled = true;
+            
+            try {
+                // Enviar datos a Formspree
+                const formData = new FormData(this);
                 
-                // Mostrar spinner
-                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
-                submitBtn.disabled = true;
+                const response = await fetch(this.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    // ÉXITO: Mostrar notificación
+                    showSuccessNotification();
+                    
+                    // Limpiar formulario
+                    this.reset();
+                    
+                } else {
+                    // ERROR
+                    showErrorNotification('Error al enviar. Intenta nuevamente.');
+                }
+                
+            } catch (error) {
+                // ERROR DE RED
+                showErrorNotification('Error de conexión. Intenta nuevamente.');
+                
+            } finally {
+                // Restaurar botón
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
             }
         });
     }
     
-    // Verificar si acabamos de cargar la página después de un envío
-    if (localStorage.getItem('formSubmitting') === 'true') {
-        localStorage.removeItem('formSubmitting');
+    // ============================================
+    // FUNCIONES DE NOTIFICACIÓN
+    // ============================================
+    
+    function showSuccessNotification() {
+        // Crear notificación
+        const notification = document.createElement('div');
+        notification.id = 'form-notification';
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 20px 25px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+            z-index: 9999;
+            max-width: 400px;
+            animation: slideIn 0.3s ease, fadeOut 0.5s ease 4.5s forwards;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        `;
         
-        // Esperar un momento y mostrar mensaje
-        setTimeout(() => {
-            const successMsg = document.createElement('div');
-            successMsg.innerHTML = `
-                <div style="
-                    background: rgba(16, 185, 129, 0.15);
-                    border: 2px solid #10b981;
-                    border-radius: 12px;
-                    padding: 20px;
-                    margin: 20px 0;
-                    text-align: center;
-                ">
-                    <i class="fas fa-check-circle" style="color: #10b981; font-size: 2rem; margin-bottom: 10px;"></i>
-                    <h4 style="color: #10b981; margin-bottom: 10px;">¡Mensaje Enviado!</h4>
-                    <p style="color: #475569;">Te contactaré en menos de 24 horas.</p>
-                </div>
-            `;
-            
-            // Insertar en la sección de contacto si existe
-            const contactSection = document.getElementById('contacto');
-            if (contactSection) {
-                const contactContainer = contactSection.querySelector('.contact-container');
-                if (contactContainer) {
-                    contactContainer.insertBefore(successMsg, contactContainer.firstChild);
-                    
-                    // Desplazar a la sección
-                    setTimeout(() => {
-                        contactSection.scrollIntoView({ behavior: 'smooth' });
-                    }, 300);
+        notification.innerHTML = `
+            <div style="font-size: 2rem;">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div>
+                <h4 style="margin: 0 0 5px 0; font-size: 1.1rem;">¡Mensaje Enviado!</h4>
+                <p style="margin: 0; font-size: 0.9rem; opacity: 0.9;">
+                    Te contactaré en menos de 24 horas.
+                </p>
+            </div>
+            <button id="close-notification" style="
+                background: none;
+                border: none;
+                color: white;
+                font-size: 1.2rem;
+                cursor: pointer;
+                margin-left: auto;
+                padding: 0 5px;
+            ">
+                &times;
+            </button>
+        `;
+        
+        // Agregar al documento
+        document.body.appendChild(notification);
+        
+        // Agregar estilos CSS para animación
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
                 }
             }
-        }, 1000);
+            
+            @keyframes fadeOut {
+                from {
+                    opacity: 1;
+                    transform: translateX(0);
+                }
+                to {
+                    opacity: 0;
+                    transform: translateX(100%);
+                }
+            }
+            
+            #form-notification:hover {
+                animation-play-state: paused;
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Botón para cerrar
+        const closeBtn = document.getElementById('close-notification');
+        closeBtn.addEventListener('click', () => {
+            notification.style.animation = 'fadeOut 0.3s ease forwards';
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                    style.parentNode.removeChild(style);
+                }
+            }, 300);
+        });
+        
+        // Auto-eliminar después de 5 segundos
+        setTimeout(() => {
+            if (notification.parentNode && notification.style.animationPlayState !== 'paused') {
+                notification.remove();
+                style.remove();
+            }
+        }, 5000);
     }
     
-    // ... resto de tu JavaScript ...
+    function showErrorNotification(message) {
+        const notification = document.createElement('div');
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            padding: 20px 25px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(239, 68, 68, 0.3);
+            z-index: 9999;
+            max-width: 400px;
+            animation: slideIn 0.3s ease, fadeOut 0.5s ease 4.5s forwards;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        `;
+        
+        notification.innerHTML = `
+            <div style="font-size: 2rem;">
+                <i class="fas fa-exclamation-circle"></i>
+            </div>
+            <div>
+                <h4 style="margin: 0 0 5px 0; font-size: 1.1rem;">Error al enviar</h4>
+                <p style="margin: 0; font-size: 0.9rem; opacity: 0.9;">${message}</p>
+            </div>
+            <button onclick="this.parentElement.remove()" style="
+                background: none;
+                border: none;
+                color: white;
+                font-size: 1.2rem;
+                cursor: pointer;
+                margin-left: auto;
+                padding: 0 5px;
+            ">
+                &times;
+            </button>
+        `;
+        
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.remove();
+            }
+        }, 5000);
+    }
+    
 });
 
    // Animación de barras de habilidades al hacer scroll

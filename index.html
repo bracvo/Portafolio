@@ -433,7 +433,7 @@
                 </div>
                 
                 <div class="contact-form-container">
-<form id="contactForm" class="contact-form" name="contact" method="POST" netlify>
+<form id="contactForm" class="contact-form" action="https://formspree.io/f/xdknagdr" method="POST">
     
     <div class="form-group">
         <label for="name">Nombre completo *</label>
@@ -461,17 +461,20 @@
         <textarea id="message" name="message" rows="5" placeholder="Describe tu proyecto, necesidades y presupuesto aproximado..." required></textarea>
     </div>
     
-    
-    <input type="hidden" name="form-name" value="contact">
+    <!-- Campos ocultos para Formspree -->
+    <input type="hidden" name="_subject" value="Nuevo mensaje desde tu portafolio - Christian Juárez">
+    <input type="hidden" name="_replyto" value="bravocv90@gmail.com">
+    <input type="hidden" name="_language" value="es">
     
     <button type="submit" class="btn btn-primary btn-block">
         <i class="fas fa-paper-plane"></i> Enviar mensaje
     </button>
     
     <p class="form-note">
-        <i class="fas fa-lock"></i> Formulario seguro con Netlify Forms.
+        <i class="fas fa-lock"></i> Tu información está segura con Formspree.
     </p>
-</form>            </div>
+</form>
+</div>
         </div>
     </section>
 
