@@ -142,8 +142,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-    
-   
 });
 
    // Animación de barras de habilidades al hacer scroll
