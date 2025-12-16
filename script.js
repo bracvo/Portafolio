@@ -214,7 +214,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     };
     
-   
+    
 });
    // Animación de barras de habilidades al hacer scroll
     const skillItems = document.querySelectorAll('.skill-item');
