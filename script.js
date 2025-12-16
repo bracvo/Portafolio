@@ -30,190 +30,429 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
+const EMAILJS_CONFIG = {
+    SERVICE_ID: 'service_9n9ivyp', 
+    TEMPLATE_ID: 'template_dcoedw6', 
+    PUBLIC_KEY: 'zYZQ6Sy_rXZcwXgFf' 
+};
+
 document.addEventListener('DOMContentLoaded', function() {
     // ============================================
-    // FORMULARIO SIMPLE CON MAILTO:
+    // FORMULARIO PROFESIONAL CON EMAILJS
     // ============================================
     
     const contactForm = document.getElementById('contactForm');
     
     if (contactForm) {
-        contactForm.addEventListener('submit', function(e) {
-            // Permitir que el formulario se envíe normalmente
-            // El navegador abrirá el cliente de email
+        contactForm.addEventListener('submit', async function(e) {
+            e.preventDefault(); // Prevenir envío normal
             
-            // Solo dar feedback visual
-            const submitBtn = this.querySelector('button[type="submit"]');
-            if (submitBtn) {
-                const originalText = submitBtn.innerHTML;
-                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Preparando email...';
-                submitBtn.disabled = true;
-                
-                // Restaurar después de 3 segundos (por si no se abre el email)
-                setTimeout(() => {
-                    submitBtn.innerHTML = originalText;
-                    submitBtn.disabled = false;
-                }, 3000);
-            }
+            // Validar formulario
+            if (!validateForm()) return;
             
-            // OPCIONAL: Podemos también guardar los datos localmente
-            // para que si el usuario cancela, no los pierda
+            // Obtener datos del formulario
+            const formData = {
+                name: document.getElementById('name').value.trim(),
+                email: document.getElementById('email').value.trim(),
+                subject: document.getElementById('subject').value,
+                message: document.getElementById('message').value.trim(),
+                to_email: 'bravocv90@gmail.com'
+            };
+            
+            // Mostrar estado de envío
+            showSendingState();
+            
             try {
-                const formData = {
-                    name: this.querySelector('#name').value,
-                    email: this.querySelector('#email').value,
-                    subject: this.querySelector('#subject').value,
-                    message: this.querySelector('#message').value,
-                    timestamp: new Date().toISOString()
-                };
-                localStorage.setItem('lastContactForm', JSON.stringify(formData));
+                // Enviar con EmailJS
+                await sendEmailWithEmailJS(formData);
+                
+                // Mostrar notificación de éxito
+                showSuccessNotification(formData.name);
+                
+                // Limpiar formulario
+                contactForm.reset();
+                
+                // Guardar en localStorage (opcional, para analytics)
+                saveContactToLocalStorage(formData);
+                
             } catch (error) {
-                console.log('No se pudo guardar localmente');
+                // Mostrar error
+                showErrorNotification();
+                console.error('Error enviando email:', error);
+            } finally {
+                // Restaurar botón
+                restoreSubmitButton();
             }
         });
+    }
+    
+    // ============================================
+    // FUNCIONES PRINCIPALES
+    // ============================================
+    
+    function validateForm() {
+        const name = document.getElementById('name').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const subject = document.getElementById('subject').value;
+        const message = document.getElementById('message').value.trim();
         
-        // OPCIONAL: Recuperar datos si el usuario volvió sin enviar
-        try {
-            const savedData = localStorage.getItem('lastContactForm');
-            if (savedData) {
-                const data = JSON.parse(savedData);
-                const nameInput = contactForm.querySelector('#name');
-                const emailInput = contactForm.querySelector('#email');
-                const subjectSelect = contactForm.querySelector('#subject');
-                const messageTextarea = contactForm.querySelector('#message');
-                
-                if (nameInput && data.name) nameInput.value = data.name;
-                if (emailInput && data.email) emailInput.value = data.email;
-                if (subjectSelect && data.subject) subjectSelect.value = data.subject;
-                if (messageTextarea && data.message) messageTextarea.value = data.message;
-                
-                // Limpiar después de mostrar
-                setTimeout(() => {
-                    localStorage.removeItem('lastContactForm');
-                }, 5000);
+        if (!name || !email || !subject || !message) {
+            showToast('Por favor, completa todos los campos.', 'error');
+            return false;
+        }
+        
+        if (!isValidEmail(email)) {
+            showToast('Por favor, ingresa un email válido.', 'error');
+            return false;
+        }
+        
+        return true;
+    }
+    
+    function isValidEmail(email) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    }
+    
+    async function sendEmailWithEmailJS(data) {
+        // Cargar EmailJS SDK si no está cargado
+        if (typeof emailjs === 'undefined') {
+            await loadEmailJSSDK();
+        }
+        
+        // Inicializar EmailJS con tu Public Key
+        emailjs.init(EMAILJS_CONFIG.PUBLIC_KEY);
+        
+        // Enviar email
+        return emailjs.send(
+            EMAILJS_CONFIG.SERVICE_ID,
+            EMAILJS_CONFIG.TEMPLATE_ID,
+            {
+                name: data.name,
+                email: data.email,
+                subject: data.subject,
+                message: data.message,
+                to_email: data.to_email,
+                reply_to: data.email,
+                from_name: data.name,
+                website: 'https://cj-dev-portfolio.netlify.app/'
             }
-        } catch (error) {
-            console.log('No se pudieron recuperar datos');
+        );
+    }
+    
+    function loadEmailJSSDK() {
+        return new Promise((resolve, reject) => {
+            // Verificar si ya está cargado
+            if (typeof emailjs !== 'undefined') {
+                resolve();
+                return;
+            }
+            
+            // Cargar SDK
+            const script = document.createElement('script');
+            script.src = 'https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js';
+            script.onload = resolve;
+            script.onerror = reject;
+            document.head.appendChild(script);
+        });
+    }
+    
+    // ============================================
+    // INTERFAZ DE USUARIO - NOTIFICACIONES
+    // ============================================
+    
+    function showSendingState() {
+        const submitBtn = contactForm.querySelector('button[type="submit"]');
+        if (submitBtn) {
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
+            submitBtn.disabled = true;
+        }
+    }
+    
+    function restoreSubmitButton() {
+        const submitBtn = contactForm.querySelector('button[type="submit"]');
+        if (submitBtn) {
+            submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar mensaje';
+            submitBtn.disabled = false;
+        }
+    }
+    
+    function showSuccessNotification(clientName) {
+        // Crear notificación elegante
+        const notification = document.createElement('div');
+        notification.id = 'success-notification';
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(16, 185, 129, 0.3);
+            z-index: 9999;
+            max-width: 450px;
+            animation: slideInRight 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            overflow: hidden;
+        `;
+        
+        notification.innerHTML = `
+            <div style="
+                position: relative;
+                width: 60px;
+                height: 60px;
+                background: rgba(255, 255, 255, 0.2);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-shrink: 0;
+            ">
+                <i class="fas fa-check" style="font-size: 1.8rem;"></i>
+                <div style="
+                    position: absolute;
+                    width: 100%;
+                    height: 100%;
+                    border: 3px solid white;
+                    border-radius: 50%;
+                    border-top-color: transparent;
+                    animation: spin 1s linear infinite;
+                "></div>
+            </div>
+            <div style="flex: 1;">
+                <h4 style="margin: 0 0 8px 0; font-size: 1.2rem; font-weight: 700;">
+                    ¡Mensaje Enviado, ${clientName}!
+                </h4>
+                <p style="margin: 0; font-size: 0.95rem; opacity: 0.95; line-height: 1.5;">
+                    He recibido tu mensaje y te contactaré en 
+                    <strong style="color: #a7f3d0;">menos de 24 horas</strong>.
+                </p>
+                <div style="
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    margin-top: 12px;
+                    font-size: 0.85rem;
+                    opacity: 0.9;
+                ">
+                    <i class="fas fa-clock"></i>
+                    <span>Tiempo de respuesta: ≤ 24h</span>
+                    <span style="margin-left: auto;">
+                        <i class="fas fa-envelope"></i>
+                        <span style="margin-left: 5px;">bravocv90@gmail.com</span>
+                    </span>
+                </div>
+            </div>
+            <button id="close-notif-btn" style="
+                background: rgba(255, 255, 255, 0.2);
+                border: none;
+                color: white;
+                width: 36px;
+                height: 36px;
+                border-radius: 50%;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-shrink: 0;
+                transition: all 0.3s ease;
+                font-size: 1.2rem;
+            ">
+                &times;
+            </button>
+            <div style="
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                height: 4px;
+                background: rgba(255, 255, 255, 0.3);
+                overflow: hidden;
+            ">
+                <div id="progress-bar" style="
+                    height: 100%;
+                    width: 100%;
+                    background: white;
+                    animation: progress 5s linear forwards;
+                "></div>
+            </div>
+        `;
+        
+        // Agregar estilos CSS
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideInRight {
+                from {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+            
+            @keyframes slideOutRight {
+                from {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+                to {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+            }
+            
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+            
+            @keyframes progress {
+                0% { width: 100%; }
+                100% { width: 0%; }
+            }
+            
+            #close-notif-btn:hover {
+                background: rgba(255, 255, 255, 0.3);
+                transform: scale(1.1);
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Agregar al documento
+        document.body.appendChild(notification);
+        
+        // Configurar cierre
+        const closeBtn = document.getElementById('close-notif-btn');
+        const progressBar = document.getElementById('progress-bar');
+        
+        closeBtn.addEventListener('click', closeNotification);
+        
+        // Cerrar automáticamente después de 5 segundos
+        setTimeout(() => {
+            if (notification.parentNode) {
+                closeNotification();
+            }
+        }, 5000);
+        
+        function closeNotification() {
+            notification.style.animation = 'slideOutRight 0.3s ease forwards';
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                    style.parentNode.removeChild(style);
+                }
+            }, 300);
+        }
+    }
+    
+    function showErrorNotification() {
+        showToast('Hubo un error al enviar. Por favor, intenta nuevamente.', 'error');
+    }
+    
+    function showToast(message, type = 'success') {
+        const toast = document.createElement('div');
+        toast.style.cssText = `
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: ${type === 'error' ? '#ef4444' : '#10b981'};
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            z-index: 9998;
+            animation: slideUp 0.3s ease;
+            max-width: 400px;
+        `;
+        
+        toast.innerHTML = `
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <i class="fas ${type === 'error' ? 'fa-exclamation-circle' : 'fa-check-circle'}"></i>
+                <span>${message}</span>
+            </div>
+        `;
+        
+        document.body.appendChild(toast);
+        
+        setTimeout(() => {
+            if (toast.parentNode) {
+                toast.style.opacity = '0';
+                toast.style.transition = 'opacity 0.3s ease';
+                setTimeout(() => {
+                    if (toast.parentNode) {
+                        toast.parentNode.removeChild(toast);
+                    }
+                }, 300);
+            }
+        }, 4000);
+    }
+    
+    function saveContactToLocalStorage(data) {
+        try {
+            // Guardar para analytics/backup
+            const contacts = JSON.parse(localStorage.getItem('portfolio_contacts') || '[]');
+            contacts.push({
+                ...data,
+                timestamp: new Date().toISOString(),
+                sent: true
+            });
+            
+            // Mantener solo últimos 50 contactos
+            if (contacts.length > 50) {
+                contacts.splice(0, contacts.length - 50);
+            }
+            
+            localStorage.setItem('portfolio_contacts', JSON.stringify(contacts));
+        } catch (e) {
+            // Ignorar errores de localStorage
         }
     }
     
     // ============================================
-    // OPCIÓN ALTERNATIVA: Modal de confirmación
+    // MEJORA: Agregar animación al formulario
     // ============================================
     
-    // Puedes agregar esto si quieres un modal antes de abrir el email
-    const setupFormWithModal = () => {
-        if (!contactForm) return;
-        
-        // Crear modal
-        const modalHTML = `
-            <div id="email-confirm-modal" style="
-                display: none;
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: rgba(15, 23, 42, 0.9);
-                backdrop-filter: blur(5px);
-                z-index: 9999;
-                align-items: center;
-                justify-content: center;
-            ">
-                <div style="
-                    background: var(--bg-card);
-                    padding: 30px;
-                    border-radius: 15px;
-                    max-width: 500px;
-                    width: 90%;
-                    border: 1px solid var(--border-color);
-                    box-shadow: var(--shadow-lg);
-                ">
-                    <h3 style="color: var(--text-primary); margin-bottom: 15px;">
-                        <i class="fas fa-envelope" style="color: var(--accent-primary); margin-right: 10px;"></i>
-                        Abrir cliente de email
-                    </h3>
-                    <p style="color: var(--text-secondary); margin-bottom: 25px; line-height: 1.6;">
-                        Se abrirá tu aplicación de email (Gmail, Outlook, etc.) con el mensaje preparado.<br>
-                        Solo debes hacer clic en "Enviar" en tu email.
-                    </p>
-                    <div style="display: flex; gap: 15px; justify-content: flex-end;">
-                        <button id="cancel-email" style="
-                            padding: 10px 20px;
-                            background: var(--bg-input);
-                            border: 1px solid var(--border-color);
-                            color: var(--text-secondary);
-                            border-radius: 8px;
-                            cursor: pointer;
-                        ">
-                            Cancelar
-                        </button>
-                        <button id="confirm-email" style="
-                            padding: 10px 20px;
-                            background: var(--accent-primary);
-                            color: white;
-                            border: none;
-                            border-radius: 8px;
-                            cursor: pointer;
-                            font-weight: 600;
-                        ">
-                            <i class="fas fa-external-link-alt"></i> Abrir Email
-                        </button>
-                    </div>
-                </div>
-            </div>
-        `;
-        
-        document.body.insertAdjacentHTML('beforeend', modalHTML);
-        
-        const modal = document.getElementById('email-confirm-modal');
-        const cancelBtn = document.getElementById('cancel-email');
-        const confirmBtn = document.getElementById('confirm-email');
-        
-        // Manejar envío del formulario
-        contactForm.addEventListener('submit', function(e) {
-            e.preventDefault(); // Prevenir envío inmediato
-            
-            // Mostrar modal
-            modal.style.display = 'flex';
-            
-            // Guardar referencia al formulario
-            const form = this;
-            
-            // Botón Cancelar
-            cancelBtn.addEventListener('click', function() {
-                modal.style.display = 'none';
-                
-                // Restaurar botón de enviar
-                const submitBtn = form.querySelector('button[type="submit"]');
-                if (submitBtn) {
-                    submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar mensaje';
-                    submitBtn.disabled = false;
-                }
-            }, { once: true });
-            
-            // Botón Confirmar
-            confirmBtn.addEventListener('click', function() {
-                modal.style.display = 'none';
-                
-                // Enviar formulario después de 300ms
-                setTimeout(() => {
-                    // Primero mostrar spinner
-                    const submitBtn = form.querySelector('button[type="submit"]');
-                    if (submitBtn) {
-                        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Abriendo email...';
-                        submitBtn.disabled = true;
-                    }
-                    
-                    // Luego enviar realmente
-                    setTimeout(() => {
-                        form.submit();
-                    }, 500);
-                }, 300);
-            }, { once: true });
+    // Agregar clase cuando el formulario es válido
+    const inputs = contactForm?.querySelectorAll('input, textarea, select');
+    inputs?.forEach(input => {
+        input.addEventListener('input', function() {
+            if (this.checkValidity()) {
+                this.classList.add('valid');
+            } else {
+                this.classList.remove('valid');
+            }
         });
-    };
+    });
     
+    // Agregar estos estilos al final de tu style.css:
+    const formStyles = `
+        input.valid, textarea.valid, select.valid {
+            border-color: #10b981 !important;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1) !important;
+        }
+        
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+    `;
+    
+    const styleEl = document.createElement('style');
+    styleEl.textContent = formStyles;
+    document.head.appendChild(styleEl);
     
 });
    // Animación de barras de habilidades al hacer scroll
