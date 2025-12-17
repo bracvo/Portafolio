@@ -30,64 +30,163 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
+// ============================================
+// REEMPLAZA ESTOS VALORES CON TUS DATOS REALES
+// ============================================
 const EMAILJS_CONFIG = {
-    SERVICE_ID: 'service_9n9ivyp', 
-    TEMPLATE_ID: 'template_dcoedw6', 
-    PUBLIC_KEY: 'zYZQ6Sy_rXZcwXgFf' 
+    // 1. Service ID: Ve a Email Services > Click en tu servicio
+    SERVICE_ID: 'service_xxxxxxxxx',
+    
+    // 2. Template ID: Ve a Email Templates > Click en tu template  
+    TEMPLATE_ID: 'template_xxxxxxxxx',
+    
+    // 3. Public Key: Ve a Account > API Keys
+    PUBLIC_KEY: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
 };
 
+// ============================================
+// CARGAR EMAILJS SDK
+// ============================================
+console.log('🔧 Cargando EmailJS SDK...');
+const emailjsScript = document.createElement('script');
+emailjsScript.src = 'https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js';
+emailjsScript.onload = function() {
+    console.log('✅ EmailJS SDK cargado');
+    
+    // Inicializar EmailJS
+    if (EMAILJS_CONFIG.PUBLIC_KEY && !EMAILJS_CONFIG.PUBLIC_KEY.includes('xxxx')) {
+        emailjs.init(EMAILJS_CONFIG.PUBLIC_KEY);
+        console.log('✅ EmailJS inicializado con Public Key');
+    } else {
+        console.error('❌ ERROR: Configura tu Public Key en EMAILJS_CONFIG');
+        console.log('ℹ️ Ve a: Account > API Keys > Public Key');
+    }
+};
+document.head.appendChild(emailjsScript);
+
+// ============================================
+// FORMULARIO CON EMAILJS - VERSIÓN SIMPLIFICADA
+// ============================================
 document.addEventListener('DOMContentLoaded', function() {
-    // ============================================
-    // FORMULARIO PROFESIONAL CON EMAILJS
-    // ============================================
+    console.log('📄 Página cargada, configurando formulario...');
     
     const contactForm = document.getElementById('contactForm');
     
-    if (contactForm) {
-        contactForm.addEventListener('submit', async function(e) {
-            e.preventDefault(); // Prevenir envío normal
-            
-            // Validar formulario
-            if (!validateForm()) return;
-            
-            // Obtener datos del formulario
-            const formData = {
-                name: document.getElementById('name').value.trim(),
-                email: document.getElementById('email').value.trim(),
-                subject: document.getElementById('subject').value,
-                message: document.getElementById('message').value.trim(),
-                to_email: 'bravocv90@gmail.com'
-            };
-            
-            // Mostrar estado de envío
-            showSendingState();
-            
-            try {
-                // Enviar con EmailJS
-                await sendEmailWithEmailJS(formData);
-                
-                // Mostrar notificación de éxito
-                showSuccessNotification(formData.name);
-                
-                // Limpiar formulario
-                contactForm.reset();
-                
-                // Guardar en localStorage (opcional, para analytics)
-                saveContactToLocalStorage(formData);
-                
-            } catch (error) {
-                // Mostrar error
-                showErrorNotification();
-                console.error('Error enviando email:', error);
-            } finally {
-                // Restaurar botón
-                restoreSubmitButton();
-            }
-        });
+    if (!contactForm) {
+        console.error('❌ No se encontró el formulario con id="contactForm"');
+        return;
     }
     
+    // Quitar cualquier action/method del HTML
+    contactForm.removeAttribute('action');
+    contactForm.removeAttribute('method');
+    contactForm.setAttribute('novalidate', 'true');
+    
+    contactForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        console.log('🔄 Formulario enviado');
+        
+        // 1. Validar
+        if (!validateForm()) {
+            console.log('❌ Validación fallida');
+            return;
+        }
+        
+        // 2. Mostrar loading
+        const submitBtn = this.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
+        submitBtn.disabled = true;
+        
+        // 3. Preparar datos
+        const formData = {
+            name: document.getElementById('name').value.trim(),
+            email: document.getElementById('email').value.trim(),
+            subject: document.getElementById('subject').value,
+            message: document.getElementById('message').value.trim(),
+            date: new Date().toLocaleString('es-MX'),
+            to_email: 'bravocv90@gmail.com'
+        };
+        
+        console.log('📤 Datos a enviar:', formData);
+        console.log('🔑 Configuración:', EMAILJS_CONFIG);
+        
+        // 4. Enviar con EmailJS
+        try {
+            // Verificar que EmailJS esté disponible
+            if (typeof emailjs === 'undefined') {
+                throw new Error('EmailJS no está cargado. Espera un momento.');
+            }
+            
+            console.log('📧 Enviando email con EmailJS...');
+            
+            const response = await emailjs.send(
+                EMAILJS_CONFIG.SERVICE_ID,
+                EMAILJS_CONFIG.TEMPLATE_ID,
+                {
+                    name: formData.name,
+                    email: formData.email,
+                    subject: formData.subject,
+                    message: formData.message,
+                    date: formData.date,
+                    to_email: formData.to_email,
+                    reply_to: formData.email
+                }
+            );
+            
+            console.log('✅ Respuesta de EmailJS:', response);
+            
+            if (response.status === 200) {
+                // ÉXITO
+                console.log('🎉 ¡Email enviado exitosamente!');
+                showNotification('success', '¡Mensaje enviado! Te contactaré pronto.');
+                contactForm.reset();
+                
+                // Opcional: Verificar en Email History después de 1 minuto
+                setTimeout(() => {
+                    console.log('📋 Revisa tu Email History en: https://dashboard.emailjs.com/admin/history');
+                }, 60000);
+                
+            } else {
+                throw new Error(`Error ${response.status}`);
+            }
+            
+        } catch (error) {
+            // ERROR
+            console.error('❌ Error detallado:', error);
+            
+            // Mensaje amigable según el error
+            let errorMsg = 'Error al enviar. Intenta nuevamente.';
+            
+            if (error.text?.includes('Invalid template ID')) {
+                errorMsg = 'Error: Template ID incorrecto. Verifica tu Template ID.';
+                console.log('🛠️ Solución: Ve a Email Templates > Copia Template ID');
+            } else if (error.text?.includes('Invalid service ID')) {
+                errorMsg = 'Error: Service ID incorrecto. Verifica tu Service ID.';
+                console.log('🛠️ Solución: Ve a Email Services > Copia Service ID');
+            } else if (error.text?.includes('Invalid public key')) {
+                errorMsg = 'Error: Public Key incorrecta. Verifica tu API Key.';
+                console.log('🛠️ Solución: Ve a Account > API Keys > Copia Public Key');
+            }
+            
+            showNotification('error', errorMsg);
+            
+            // Mostrar ayuda en consola
+            console.log('🆘 AYUDA:');
+            console.log('1. Ve a: https://dashboard.emailjs.com/admin');
+            console.log('2. Service ID: Email Services > Click en tu servicio');
+            console.log('3. Template ID: Email Templates > Click en tu template');
+            console.log('4. Public Key: Account > API Keys');
+            
+        } finally {
+            // Restaurar botón
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+        }
+    });
+    
     // ============================================
-    // FUNCIONES PRINCIPALES
+    // FUNCIONES AUXILIARES
     // ============================================
     
     function validateForm() {
@@ -97,12 +196,12 @@ document.addEventListener('DOMContentLoaded', function() {
         const message = document.getElementById('message').value.trim();
         
         if (!name || !email || !subject || !message) {
-            showToast('Por favor, completa todos los campos.', 'error');
+            showNotification('error', 'Por favor, completa todos los campos.');
             return false;
         }
         
         if (!isValidEmail(email)) {
-            showToast('Por favor, ingresa un email válido.', 'error');
+            showNotification('error', 'Por favor, ingresa un email válido.');
             return false;
         }
         
@@ -110,350 +209,75 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     function isValidEmail(email) {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailRegex.test(email);
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     }
     
-    async function sendEmailWithEmailJS(data) {
-        // Cargar EmailJS SDK si no está cargado
-        if (typeof emailjs === 'undefined') {
-            await loadEmailJSSDK();
-        }
+    function showNotification(type, message) {
+        // Eliminar notificaciones previas
+        const oldNotif = document.getElementById('emailjs-notification');
+        if (oldNotif) oldNotif.remove();
         
-        // Inicializar EmailJS con tu Public Key
-        emailjs.init(EMAILJS_CONFIG.PUBLIC_KEY);
-        
-        // Enviar email
-        return emailjs.send(
-            EMAILJS_CONFIG.SERVICE_ID,
-            EMAILJS_CONFIG.TEMPLATE_ID,
-            {
-                name: data.name,
-                email: data.email,
-                subject: data.subject,
-                message: data.message,
-                to_email: data.to_email,
-                reply_to: data.email,
-                from_name: data.name,
-                website: 'https://cj-dev-portfolio.netlify.app/'
-            }
-        );
-    }
-    
-    function loadEmailJSSDK() {
-        return new Promise((resolve, reject) => {
-            // Verificar si ya está cargado
-            if (typeof emailjs !== 'undefined') {
-                resolve();
-                return;
-            }
-            
-            // Cargar SDK
-            const script = document.createElement('script');
-            script.src = 'https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js';
-            script.onload = resolve;
-            script.onerror = reject;
-            document.head.appendChild(script);
-        });
-    }
-    
-    // ============================================
-    // INTERFAZ DE USUARIO - NOTIFICACIONES
-    // ============================================
-    
-    function showSendingState() {
-        const submitBtn = contactForm.querySelector('button[type="submit"]');
-        if (submitBtn) {
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
-            submitBtn.disabled = true;
-        }
-    }
-    
-    function restoreSubmitButton() {
-        const submitBtn = contactForm.querySelector('button[type="submit"]');
-        if (submitBtn) {
-            submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar mensaje';
-            submitBtn.disabled = false;
-        }
-    }
-    
-    function showSuccessNotification(clientName) {
-        // Crear notificación elegante
+        // Crear nueva notificación
         const notification = document.createElement('div');
-        notification.id = 'success-notification';
+        notification.id = 'emailjs-notification';
         notification.style.cssText = `
             position: fixed;
             top: 20px;
             right: 20px;
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: white;
-            padding: 25px;
-            border-radius: 16px;
-            box-shadow: 0 20px 40px rgba(16, 185, 129, 0.3);
-            z-index: 9999;
-            max-width: 450px;
-            animation: slideInRight 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            overflow: hidden;
-        `;
-        
-        notification.innerHTML = `
-            <div style="
-                position: relative;
-                width: 60px;
-                height: 60px;
-                background: rgba(255, 255, 255, 0.2);
-                border-radius: 50%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                flex-shrink: 0;
-            ">
-                <i class="fas fa-check" style="font-size: 1.8rem;"></i>
-                <div style="
-                    position: absolute;
-                    width: 100%;
-                    height: 100%;
-                    border: 3px solid white;
-                    border-radius: 50%;
-                    border-top-color: transparent;
-                    animation: spin 1s linear infinite;
-                "></div>
-            </div>
-            <div style="flex: 1;">
-                <h4 style="margin: 0 0 8px 0; font-size: 1.2rem; font-weight: 700;">
-                    ¡Mensaje Enviado, ${clientName}!
-                </h4>
-                <p style="margin: 0; font-size: 0.95rem; opacity: 0.95; line-height: 1.5;">
-                    He recibido tu mensaje y te contactaré en 
-                    <strong style="color: #a7f3d0;">menos de 24 horas</strong>.
-                </p>
-                <div style="
-                    display: flex;
-                    align-items: center;
-                    gap: 10px;
-                    margin-top: 12px;
-                    font-size: 0.85rem;
-                    opacity: 0.9;
-                ">
-                    <i class="fas fa-clock"></i>
-                    <span>Tiempo de respuesta: ≤ 24h</span>
-                    <span style="margin-left: auto;">
-                        <i class="fas fa-envelope"></i>
-                        <span style="margin-left: 5px;">bravocv90@gmail.com</span>
-                    </span>
-                </div>
-            </div>
-            <button id="close-notif-btn" style="
-                background: rgba(255, 255, 255, 0.2);
-                border: none;
-                color: white;
-                width: 36px;
-                height: 36px;
-                border-radius: 50%;
-                cursor: pointer;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                flex-shrink: 0;
-                transition: all 0.3s ease;
-                font-size: 1.2rem;
-            ">
-                &times;
-            </button>
-            <div style="
-                position: absolute;
-                bottom: 0;
-                left: 0;
-                width: 100%;
-                height: 4px;
-                background: rgba(255, 255, 255, 0.3);
-                overflow: hidden;
-            ">
-                <div id="progress-bar" style="
-                    height: 100%;
-                    width: 100%;
-                    background: white;
-                    animation: progress 5s linear forwards;
-                "></div>
-            </div>
-        `;
-        
-        // Agregar estilos CSS
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes slideInRight {
-                from {
-                    transform: translateX(100%);
-                    opacity: 0;
-                }
-                to {
-                    transform: translateX(0);
-                    opacity: 1;
-                }
-            }
-            
-            @keyframes slideOutRight {
-                from {
-                    transform: translateX(0);
-                    opacity: 1;
-                }
-                to {
-                    transform: translateX(100%);
-                    opacity: 0;
-                }
-            }
-            
-            @keyframes spin {
-                0% { transform: rotate(0deg); }
-                100% { transform: rotate(360deg); }
-            }
-            
-            @keyframes progress {
-                0% { width: 100%; }
-                100% { width: 0%; }
-            }
-            
-            #close-notif-btn:hover {
-                background: rgba(255, 255, 255, 0.3);
-                transform: scale(1.1);
-            }
-        `;
-        document.head.appendChild(style);
-        
-        // Agregar al documento
-        document.body.appendChild(notification);
-        
-        // Configurar cierre
-        const closeBtn = document.getElementById('close-notif-btn');
-        const progressBar = document.getElementById('progress-bar');
-        
-        closeBtn.addEventListener('click', closeNotification);
-        
-        // Cerrar automáticamente después de 5 segundos
-        setTimeout(() => {
-            if (notification.parentNode) {
-                closeNotification();
-            }
-        }, 5000);
-        
-        function closeNotification() {
-            notification.style.animation = 'slideOutRight 0.3s ease forwards';
-            setTimeout(() => {
-                if (notification.parentNode) {
-                    notification.parentNode.removeChild(notification);
-                    style.parentNode.removeChild(style);
-                }
-            }, 300);
-        }
-    }
-    
-    function showErrorNotification() {
-        showToast('Hubo un error al enviar. Por favor, intenta nuevamente.', 'error');
-    }
-    
-    function showToast(message, type = 'success') {
-        const toast = document.createElement('div');
-        toast.style.cssText = `
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: ${type === 'error' ? '#ef4444' : '#10b981'};
+            background: ${type === 'success' ? '#10b981' : '#ef4444'};
             color: white;
             padding: 15px 20px;
             border-radius: 10px;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-            z-index: 9998;
-            animation: slideUp 0.3s ease;
+            z-index: 9999;
             max-width: 400px;
+            animation: slideIn 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: 'Inter', sans-serif;
         `;
         
-        toast.innerHTML = `
-            <div style="display: flex; align-items: center; gap: 10px;">
-                <i class="fas ${type === 'error' ? 'fa-exclamation-circle' : 'fa-check-circle'}"></i>
-                <span>${message}</span>
-            </div>
+        notification.innerHTML = `
+            <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
+            <span>${message}</span>
+            <button onclick="this.parentElement.remove()" style="
+                background: none;
+                border: none;
+                color: white;
+                margin-left: auto;
+                cursor: pointer;
+                padding: 0 5px;
+            ">
+                &times;
+            </button>
         `;
         
-        document.body.appendChild(toast);
+        document.body.appendChild(notification);
         
+        // Auto-eliminar después de 5 segundos
         setTimeout(() => {
-            if (toast.parentNode) {
-                toast.style.opacity = '0';
-                toast.style.transition = 'opacity 0.3s ease';
-                setTimeout(() => {
-                    if (toast.parentNode) {
-                        toast.parentNode.removeChild(toast);
-                    }
-                }, 300);
+            if (notification.parentNode) {
+                notification.remove();
             }
-        }, 4000);
+        }, 5000);
     }
     
-    function saveContactToLocalStorage(data) {
-        try {
-            // Guardar para analytics/backup
-            const contacts = JSON.parse(localStorage.getItem('portfolio_contacts') || '[]');
-            contacts.push({
-                ...data,
-                timestamp: new Date().toISOString(),
-                sent: true
-            });
-            
-            // Mantener solo últimos 50 contactos
-            if (contacts.length > 50) {
-                contacts.splice(0, contacts.length - 50);
-            }
-            
-            localStorage.setItem('portfolio_contacts', JSON.stringify(contacts));
-        } catch (e) {
-            // Ignorar errores de localStorage
-        }
-    }
-    
-    // ============================================
-    // MEJORA: Agregar animación al formulario
-    // ============================================
-    
-    // Agregar clase cuando el formulario es válido
-    const inputs = contactForm?.querySelectorAll('input, textarea, select');
-    inputs?.forEach(input => {
-        input.addEventListener('input', function() {
-            if (this.checkValidity()) {
-                this.classList.add('valid');
-            } else {
-                this.classList.remove('valid');
-            }
-        });
-    });
-    
-    // Agregar estos estilos al final de tu style.css:
-    const formStyles = `
-        input.valid, textarea.valid, select.valid {
-            border-color: #10b981 !important;
-            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1) !important;
-        }
-        
-        @keyframes slideUp {
+    // Agregar animación CSS
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes slideIn {
             from {
-                transform: translateY(100%);
+                transform: translateX(100%);
                 opacity: 0;
             }
             to {
-                transform: translateY(0);
+                transform: translateX(0);
                 opacity: 1;
             }
         }
     `;
-    
-    const styleEl = document.createElement('style');
-    styleEl.textContent = formStyles;
-    document.head.appendChild(styleEl);
-    
+    document.head.appendChild(style);
 });
    // Animación de barras de habilidades al hacer scroll
     const skillItems = document.querySelectorAll('.skill-item');
