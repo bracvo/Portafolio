@@ -34,13 +34,13 @@ document.addEventListener('DOMContentLoaded', function() {
 // REEMPLAZA ESTOS VALORES CON TUS DATOS REALES
 // ============================================
 const EMAILJS_CONFIG = {
-    // 1. Service ID: Ve a Email Services > Click en tu servicio
+    // Service ID que obtuviste
     SERVICE_ID: 'service_9n9ivyp',
     
-    // 2. Template ID: Ve a Email Templates > Click en tu template  
+    // Template ID que obtuviste  
     TEMPLATE_ID: 'template_dcoedw6',
     
-    // 3. Public Key: Ve a Account > API Keys
+    // Public Key que tienes
     PUBLIC_KEY: 'eabIl0YwbLPwfLotx'
 };
 
