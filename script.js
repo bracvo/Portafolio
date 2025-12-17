@@ -31,16 +31,16 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
 // ============================================
-// REEMPLAZA ESTOS VALORES CON TUS DATOS REALES
+// CONFIGURACIÓN EMAILJS
 // ============================================
 const EMAILJS_CONFIG = {
-    // Service ID que obtuviste
+    // Service ID de Email Services
     SERVICE_ID: 'service_9n9ivyp',
     
-    // Template ID que obtuviste  
+    // Template ID de Email Templates  
     TEMPLATE_ID: 'template_dcoedw6',
     
-    // Public Key que tienes
+    // Public Key de Account > API Keys
     PUBLIC_KEY: 'eabIl0YwbLPwfLotx'
 };
 
@@ -56,16 +56,24 @@ emailjsScript.onload = function() {
     // Inicializar EmailJS
     if (EMAILJS_CONFIG.PUBLIC_KEY && !EMAILJS_CONFIG.PUBLIC_KEY.includes('xxxx')) {
         emailjs.init(EMAILJS_CONFIG.PUBLIC_KEY);
-        console.log('✅ EmailJS inicializado con Public Key');
+        console.log('✅ EmailJS inicializado con Public Key:', EMAILJS_CONFIG.PUBLIC_KEY.substring(0, 8) + '...');
+        
+        // Verificar que EmailJS esté listo
+        window.EMAILJS_READY = true;
+        console.log('🚀 EmailJS listo para usar');
     } else {
         console.error('❌ ERROR: Configura tu Public Key en EMAILJS_CONFIG');
         console.log('ℹ️ Ve a: Account > API Keys > Public Key');
     }
 };
+emailjsScript.onerror = function() {
+    console.error('❌ Error al cargar EmailJS SDK');
+    alert('Error al cargar el servicio de email. Por favor, recarga la página.');
+};
 document.head.appendChild(emailjsScript);
 
 // ============================================
-// FORMULARIO CON EMAILJS - VERSIÓN SIMPLIFICADA
+// FORMULARIO CON EMAILJS - VERSIÓN OPTIMIZADA
 // ============================================
 document.addEventListener('DOMContentLoaded', function() {
     console.log('📄 Página cargada, configurando formulario...');
@@ -77,113 +85,188 @@ document.addEventListener('DOMContentLoaded', function() {
         return;
     }
     
-    // Quitar cualquier action/method del HTML
+    // Preparar formulario
     contactForm.removeAttribute('action');
     contactForm.removeAttribute('method');
     contactForm.setAttribute('novalidate', 'true');
     
+    // Botón de enviar
+    const submitBtn = contactForm.querySelector('button[type="submit"]');
+    let originalBtnText = submitBtn ? submitBtn.innerHTML : '';
+    
     contactForm.addEventListener('submit', async function(e) {
         e.preventDefault();
-        console.log('🔄 Formulario enviado');
+        console.log('🔄 Formulario enviado - Iniciando proceso...');
         
-        // 1. Validar
+        // 1. Validar formulario
         if (!validateForm()) {
             console.log('❌ Validación fallida');
             return;
         }
         
-        // 2. Mostrar loading
-        const submitBtn = this.querySelector('button[type="submit"]');
-        const originalText = submitBtn.innerHTML;
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
-        submitBtn.disabled = true;
+        // 2. Verificar que EmailJS esté cargado
+        if (!window.EMAILJS_READY || typeof emailjs === 'undefined') {
+            console.error('❌ EmailJS no está listo');
+            showNotification('error', 'El servicio de email no está listo. Espera un momento o recarga la página.');
+            return;
+        }
         
-        // 3. Preparar datos
+        // 3. Mostrar loading
+        if (submitBtn) {
+            originalBtnText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
+            submitBtn.disabled = true;
+        }
+        
+        // 4. Preparar datos (SOLO las variables que usa tu template)
         const formData = {
             name: document.getElementById('name').value.trim(),
             email: document.getElementById('email').value.trim(),
             subject: document.getElementById('subject').value,
             message: document.getElementById('message').value.trim(),
-            date: new Date().toLocaleString('es-MX'),
-            to_email: 'bravocv90@gmail.com'
+            date: new Date().toLocaleString('es-MX', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            })
         };
         
-        console.log('📤 Datos a enviar:', formData);
-        console.log('🔑 Configuración:', EMAILJS_CONFIG);
+        console.log('📊 Datos recopilados:', formData);
+        console.log('🔑 Configuración actual:', {
+            SERVICE_ID: EMAILJS_CONFIG.SERVICE_ID,
+            TEMPLATE_ID: EMAILJS_CONFIG.TEMPLATE_ID,
+            PUBLIC_KEY: EMAILJS_CONFIG.PUBLIC_KEY ? 'Configurada' : 'Falta'
+        });
         
-        // 4. Enviar con EmailJS
+        // 5. Enviar con EmailJS
         try {
-            // Verificar que EmailJS esté disponible
-            if (typeof emailjs === 'undefined') {
-                throw new Error('EmailJS no está cargado. Espera un momento.');
-            }
-            
             console.log('📧 Enviando email con EmailJS...');
+            console.log('📤 Parámetros a enviar:', {
+                service_id: EMAILJS_CONFIG.SERVICE_ID,
+                template_id: EMAILJS_CONFIG.TEMPLATE_ID,
+                template_params: formData
+            });
             
+            // IMPORTANTE: Solo enviar las variables que existen en tu template
+            // Tu template usa: {{name}}, {{email}}, {{subject}}, {{message}}, {{date}}
             const response = await emailjs.send(
                 EMAILJS_CONFIG.SERVICE_ID,
                 EMAILJS_CONFIG.TEMPLATE_ID,
-                {
-                    name: formData.name,
-                    email: formData.email,
-                    subject: formData.subject,
-                    message: formData.message,
-                    date: formData.date,
-                    to_email: formData.to_email,
-                    reply_to: formData.email
-                }
+                formData  // Solo las variables que necesita el template
             );
             
-            console.log('✅ Respuesta de EmailJS:', response);
+            console.log('✅ Respuesta de EmailJS:', {
+                status: response.status,
+                text: response.text
+            });
             
             if (response.status === 200) {
                 // ÉXITO
                 console.log('🎉 ¡Email enviado exitosamente!');
-                showNotification('success', '¡Mensaje enviado! Te contactaré pronto.');
+                showNotification('success', '¡Mensaje enviado exitosamente! Te contactaré pronto.');
+                
+                // Resetear formulario
                 contactForm.reset();
                 
-                // Opcional: Verificar en Email History después de 1 minuto
+                // Mostrar mensaje de confirmación adicional
                 setTimeout(() => {
                     console.log('📋 Revisa tu Email History en: https://dashboard.emailjs.com/admin/history');
-                }, 60000);
+                    console.log('💡 El email debería llegar en 1-2 minutos');
+                }, 1000);
                 
             } else {
-                throw new Error(`Error ${response.status}`);
+                throw new Error(`Error ${response.status}: ${response.text}`);
             }
             
         } catch (error) {
-            // ERROR
-            console.error('❌ Error detallado:', error);
+            // ERROR - Análisis detallado
+            console.error('❌ Error completo al enviar:', error);
             
-            // Mensaje amigable según el error
-            let errorMsg = 'Error al enviar. Intenta nuevamente.';
+            let errorMsg = 'Error al enviar el mensaje. Por favor, intenta nuevamente.';
+            let helpMsg = '';
             
-            if (error.text?.includes('Invalid template ID')) {
-                errorMsg = 'Error: Template ID incorrecto. Verifica tu Template ID.';
-                console.log('🛠️ Solución: Ve a Email Templates > Copia Template ID');
-            } else if (error.text?.includes('Invalid service ID')) {
-                errorMsg = 'Error: Service ID incorrecto. Verifica tu Service ID.';
-                console.log('🛠️ Solución: Ve a Email Services > Copia Service ID');
-            } else if (error.text?.includes('Invalid public key')) {
-                errorMsg = 'Error: Public Key incorrecta. Verifica tu API Key.';
-                console.log('🛠️ Solución: Ve a Account > API Keys > Copia Public Key');
+            if (error.text) {
+                console.log('📄 Error text:', error.text);
+                
+                if (error.text.includes('Invalid template ID')) {
+                    errorMsg = 'Error: Template ID incorrecto.';
+                    helpMsg = 'Verifica el Template ID en Email Templates.';
+                    console.log('🛠️ Solución: Ve a Email Templates > Copia Template ID');
+                } else if (error.text.includes('Invalid service ID')) {
+                    errorMsg = 'Error: Service ID incorrecto.';
+                    helpMsg = 'Verifica el Service ID en Email Services.';
+                    console.log('🛠️ Solución: Ve a Email Services > Copia Service ID');
+                } else if (error.text.includes('Invalid public key')) {
+                    errorMsg = 'Error: Public Key incorrecta.';
+                    helpMsg = 'Verifica tu API Key pública.';
+                    console.log('🛠️ Solución: Ve a Account > API Keys > Copia Public Key');
+                } else if (error.text.includes('Service not active')) {
+                    errorMsg = 'Error: Servicio de email no activo.';
+                    helpMsg = 'Verifica que tu servicio esté conectado.';
+                    console.log('🛠️ Solución: Ve a Email Services > Conecta tu servicio');
+                }
             }
             
-            showNotification('error', errorMsg);
+            // Mostrar error en pantalla
+            showNotification('error', `${errorMsg} ${helpMsg}`);
             
-            // Mostrar ayuda en consola
-            console.log('🆘 AYUDA:');
-            console.log('1. Ve a: https://dashboard.emailjs.com/admin');
-            console.log('2. Service ID: Email Services > Click en tu servicio');
-            console.log('3. Template ID: Email Templates > Click en tu template');
-            console.log('4. Public Key: Account > API Keys');
+            // Mostrar ayuda adicional en consola
+            console.log('🆘 AYUDA DETALLADA:');
+            console.log('1. Verifica que las variables coincidan con tu template:');
+            console.log('   Template usa: name, email, subject, message, date');
+            console.log('2. Verifica en dashboard.emailjs.com:');
+            console.log('   - Service ID: Email Services > Click en tu servicio');
+            console.log('   - Template ID: Email Templates > Click en tu template');
+            console.log('   - Public Key: Account > API Keys');
+            console.log('3. Prueba el servicio directamente:');
+            console.log('   https://dashboard.emailjs.com/admin/test');
             
         } finally {
             // Restaurar botón
-            submitBtn.innerHTML = originalText;
-            submitBtn.disabled = false;
+            if (submitBtn) {
+                submitBtn.innerHTML = originalBtnText;
+                submitBtn.disabled = false;
+            }
         }
     });
+    
+    // ============================================
+    // FUNCIÓN PARA PROBAR EMAILJS DESDE CONSOLA
+    // ============================================
+    window.testEmailService = async function() {
+        console.log('🧪 Iniciando prueba de EmailJS...');
+        
+        if (!window.EMAILJS_READY) {
+            console.error('EmailJS no está listo');
+            return;
+        }
+        
+        const testData = {
+            name: 'Juan Pérez (Prueba)',
+            email: 'test@ejemplo.com',
+            subject: 'Consulta sobre proyecto',
+            message: 'Este es un mensaje de prueba enviado desde la consola. Si recibes esto, EmailJS está funcionando correctamente.',
+            date: new Date().toLocaleString('es-MX')
+        };
+        
+        try {
+            const response = await emailjs.send(
+                EMAILJS_CONFIG.SERVICE_ID,
+                EMAILJS_CONFIG.TEMPLATE_ID,
+                testData
+            );
+            console.log('✅ Prueba exitosa:', response);
+            showNotification('success', 'Prueba enviada exitosamente!');
+            return true;
+        } catch (error) {
+            console.error('❌ Prueba fallida:', error);
+            showNotification('error', 'Prueba fallida: ' + error.text);
+            return false;
+        }
+    };
     
     // ============================================
     // FUNCIONES AUXILIARES
@@ -195,13 +278,40 @@ document.addEventListener('DOMContentLoaded', function() {
         const subject = document.getElementById('subject').value;
         const message = document.getElementById('message').value.trim();
         
-        if (!name || !email || !subject || !message) {
-            showNotification('error', 'Por favor, completa todos los campos.');
+        // Validación básica
+        if (!name) {
+            showNotification('error', 'Por favor, ingresa tu nombre.');
+            document.getElementById('name').focus();
+            return false;
+        }
+        
+        if (!email) {
+            showNotification('error', 'Por favor, ingresa tu email.');
+            document.getElementById('email').focus();
             return false;
         }
         
         if (!isValidEmail(email)) {
             showNotification('error', 'Por favor, ingresa un email válido.');
+            document.getElementById('email').focus();
+            return false;
+        }
+        
+        if (!subject) {
+            showNotification('error', 'Por favor, selecciona un tipo de proyecto.');
+            document.getElementById('subject').focus();
+            return false;
+        }
+        
+        if (!message) {
+            showNotification('error', 'Por favor, escribe tu mensaje.');
+            document.getElementById('message').focus();
+            return false;
+        }
+        
+        if (message.length < 10) {
+            showNotification('error', 'El mensaje debe tener al menos 10 caracteres.');
+            document.getElementById('message').focus();
             return false;
         }
         
@@ -209,77 +319,125 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     function isValidEmail(email) {
-        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
     }
     
     function showNotification(type, message) {
         // Eliminar notificaciones previas
-        const oldNotif = document.getElementById('emailjs-notification');
-        if (oldNotif) oldNotif.remove();
+        const existingNotif = document.querySelector('.emailjs-notification');
+        if (existingNotif) {
+            existingNotif.remove();
+        }
         
-        // Crear nueva notificación
+        // Crear notificación
         const notification = document.createElement('div');
-        notification.id = 'emailjs-notification';
+        notification.className = `emailjs-notification emailjs-notification-${type}`;
+        
+        // Estilos
         notification.style.cssText = `
             position: fixed;
-            top: 20px;
-            right: 20px;
+            top: 30px;
+            right: 30px;
             background: ${type === 'success' ? '#10b981' : '#ef4444'};
             color: white;
-            padding: 15px 20px;
-            border-radius: 10px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-            z-index: 9999;
-            max-width: 400px;
-            animation: slideIn 0.3s ease;
+            padding: 18px 25px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+            z-index: 99999;
+            max-width: 450px;
+            animation: slideInRight 0.4s ease-out;
             display: flex;
             align-items: center;
-            gap: 10px;
-            font-family: 'Inter', sans-serif;
+            gap: 15px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-size: 15px;
+            line-height: 1.5;
+            backdrop-filter: blur(10px);
+            border: 1px solid ${type === 'success' ? 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.1)'};
         `;
         
+        // Ícono
+        const icon = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
+        
+        // Contenido
         notification.innerHTML = `
-            <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
-            <span>${message}</span>
+            <div style="font-size: 24px;">
+                <i class="fas ${icon}"></i>
+            </div>
+            <div style="flex: 1;">
+                <strong>${type === 'success' ? '¡Éxito!' : 'Error'}</strong><br>
+                <span>${message}</span>
+            </div>
             <button onclick="this.parentElement.remove()" style="
                 background: none;
                 border: none;
                 color: white;
-                margin-left: auto;
                 cursor: pointer;
-                padding: 0 5px;
-            ">
+                padding: 5px 10px;
+                font-size: 20px;
+                opacity: 0.8;
+                transition: opacity 0.2s;
+            " onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.8'">
                 &times;
             </button>
         `;
         
         document.body.appendChild(notification);
         
-        // Auto-eliminar después de 5 segundos
+        // Auto-eliminar
         setTimeout(() => {
             if (notification.parentNode) {
-                notification.remove();
+                notification.style.animation = 'slideOutRight 0.4s ease-out forwards';
+                setTimeout(() => notification.remove(), 400);
             }
-        }, 5000);
+        }, 6000);
     }
     
-    // Agregar animación CSS
-    const style = document.createElement('style');
-    style.textContent = `
-        @keyframes slideIn {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
+    // Agregar estilos de animación
+    if (!document.querySelector('#emailjs-notification-styles')) {
+        const style = document.createElement('style');
+        style.id = 'emailjs-notification-styles';
+        style.textContent = `
+            @keyframes slideInRight {
+                from {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
             }
-            to {
-                transform: translateX(0);
-                opacity: 1;
+            
+            @keyframes slideOutRight {
+                from {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+                to {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
             }
-        }
-    `;
-    document.head.appendChild(style);
+            
+            .emailjs-notification {
+                transition: all 0.3s ease;
+            }
+        `;
+        document.head.appendChild(style);
+    }
 });
-   // Animación de barras de habilidades al hacer scroll
+
+// ============================================
+// FUNCIÓN PARA VERIFICAR CONFIGURACIÓN
+// ============================================
+console.log('⚙️ Script EmailJS cargado correctamente');
+console.log('📝 Para probar el servicio, ejecuta en consola: testEmailService()');
+console.log('🔍 Para ver la configuración actual:');
+console.log('- SERVICE_ID:', EMAILJS_CONFIG.SERVICE_ID);
+console.log('- TEMPLATE_ID:', EMAILJS_CONFIG.TEMPLATE_ID);
+console.log('- PUBLIC_KEY:', EMAILJS_CONFIG.PUBLIC_KEY ? 'Configurada' : 'NO CONFIGURADA');   // Animación de barras de habilidades al hacer scroll
     const skillItems = document.querySelectorAll('.skill-item');
     const skillObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
