@@ -44,6 +44,9 @@ const EMAILJS_CONFIG = {
     PUBLIC_KEY: 'eabIl0YwbLPwfLotx'
 };
 
+// Variable global para la función de prueba
+let testEmailServiceFunction = null;
+
 // ============================================
 // CARGAR EMAILJS SDK
 // ============================================
@@ -61,6 +64,9 @@ emailjsScript.onload = function() {
         // Verificar que EmailJS esté listo
         window.EMAILJS_READY = true;
         console.log('🚀 EmailJS listo para usar');
+        
+        // Hacer emailjs globalmente accesible
+        window.emailjs = emailjs;
     } else {
         console.error('❌ ERROR: Configura tu Public Key en EMAILJS_CONFIG');
         console.log('ℹ️ Ve a: Account > API Keys > Public Key');
@@ -150,12 +156,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 template_params: formData
             });
             
-            // IMPORTANTE: Solo enviar las variables que existen en tu template
-            // Tu template usa: {{name}}, {{email}}, {{subject}}, {{message}}, {{date}}
             const response = await emailjs.send(
                 EMAILJS_CONFIG.SERVICE_ID,
                 EMAILJS_CONFIG.TEMPLATE_ID,
-                formData  // Solo las variables que necesita el template
+                formData
             );
             
             console.log('✅ Respuesta de EmailJS:', {
@@ -267,6 +271,10 @@ document.addEventListener('DOMContentLoaded', function() {
             return false;
         }
     };
+    
+    // También la guardamos en una variable local
+    testEmailServiceFunction = window.testEmailService;
+    console.log('✅ Función testEmailService disponible globalmente');
     
     // ============================================
     // FUNCIONES AUXILIARES
@@ -430,37 +438,20 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // ============================================
-// FUNCIÓN PARA VERIFICAR CONFIGURACIÓN
+// HACER LA FUNCIÓN GLOBAL (fuera del DOMContentLoaded)
 // ============================================
+// Esto asegura que esté disponible incluso si el DOM no ha cargado
+window.testEmailService = window.testEmailService || function() {
+    console.log('⚠️ EmailJS aún no está completamente cargado. Espera unos segundos...');
+    return Promise.resolve(false);
+};
+
 console.log('⚙️ Script EmailJS cargado correctamente');
 console.log('📝 Para probar el servicio, ejecuta en consola: testEmailService()');
 console.log('🔍 Para ver la configuración actual:');
 console.log('- SERVICE_ID:', EMAILJS_CONFIG.SERVICE_ID);
 console.log('- TEMPLATE_ID:', EMAILJS_CONFIG.TEMPLATE_ID);
-console.log('- PUBLIC_KEY:', EMAILJS_CONFIG.PUBLIC_KEY ? 'Configurada' : 'NO CONFIGURADA');   // Animación de barras de habilidades al hacer scroll
-    const skillItems = document.querySelectorAll('.skill-item');
-    const skillObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const skillLevel = entry.target.querySelector('.skill-level');
-                const width = skillLevel.style.width;
-                skillLevel.style.width = '0%';
-                
-                // Animar después de un pequeño delay
-                setTimeout(() => {
-                    skillLevel.style.width = width;
-                }, 300);
-                
-                skillObserver.unobserve(entry.target);
-            }
-        });
-    }, { threshold: 0.5 });
-    
-    skillItems.forEach(item => {
-        skillObserver.observe(item);
-    });
-    
-    // Efecto de aparición para tarjetas
+console.log('- PUBLIC_KEY:', EMAILJS_CONFIG.PUBLIC_KEY ? 'Configurada' : 'NO CONFIGURADA');    // Efecto de aparición para tarjetas
     const cards = document.querySelectorAll('.service-card, .project-card');
     const cardObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
