@@ -7,11 +7,15 @@ const EMAILJS_CONFIG = {
     PUBLIC_KEY: 'eabIl0YwbLPwfLotx'
 };
 
+// Estado de EmailJS
+let EMAILJS_LOADED = false;
+let EMAILJS_INITIALIZED = false;
+
 // ============================================
 // INICIALIZACIÓN PRINCIPAL
 // ============================================
 document.addEventListener('DOMContentLoaded', function() {
-    console.log(' Portfolio inicializado - Christian Juárez');
+    console.log('🚀 Portfolio inicializado - Christian Juárez');
     
     // 1. Menú móvil
     initMobileMenu();
@@ -46,7 +50,7 @@ function initMobileMenu() {
     const navLinks = document.querySelector('.nav-links');
     
     if (!menuToggle || !navLinks) {
-        console.log('Elementos del menú no encontrados');
+        console.log('⚠️ Elementos del menú no encontrados');
         return;
     }
     
@@ -79,7 +83,7 @@ function initMobileMenu() {
         });
     });
     
-    console.log(' Menú móvil configurado');
+    console.log('✅ Menú móvil configurado');
 }
 
 // ============================================
@@ -112,7 +116,7 @@ function initScrollAnimations() {
         observer.observe(element);
     });
     
-    console.log(` Animaciones configuradas para ${animatedElements.length} elementos`);
+    console.log(`✅ Animaciones configuradas para ${animatedElements.length} elementos`);
 }
 
 // ============================================
@@ -138,17 +142,10 @@ function initNavbarScroll() {
             navbar.style.boxShadow = 'none';
         }
         
-        // Ocultar/mostrar navbar al hacer scroll (opcional)
-        if (currentScroll > lastScroll && currentScroll > 100) {
-            // navbar.style.transform = 'translateY(-100%)';
-        } else {
-            // navbar.style.transform = 'translateY(0)';
-        }
-        
         lastScroll = currentScroll;
     });
     
-    console.log('Efecto de navbar configurado');
+    console.log('✅ Efecto de navbar configurado');
 }
 
 // ============================================
@@ -193,146 +190,6 @@ function startTypingAnimation(element, text) {
 // 5. MODALES PARA GALERÍAS DE PROYECTOS
 // ============================================
 function initProjectModals() {
-    // Contenido HTML de los modales
-    const modalContent = {
-        'tenis': `
-            <h3> Tienda Online de Tenis</h3>
-            <div class="modal-gallery">
-                <div class="two-images">
-                    <div>
-                        <img src="img/screencapture-127-0-0-1-5501-index-html-2025-12-04-20_15_04.png" 
-                             alt="Homepage de tienda de tenis"
-                             class="zoomable-image">
-                        <p class="gallery-caption">Homepage - Diseño moderno con productos destacados</p>
-                    </div>
-                    <div>
-                        <img src="img/screencapture-127-0-0-1-5501-productos-html-2025-12-04-20_16_19.png" 
-                             alt="Página de producto"
-                             class="zoomable-image">
-                        <p class="gallery-caption">Página de producto - Detalles, variaciones y compra</p>
-                    </div>
-                </div>
-            </div>
-            <div class="project-description">
-                <h4> Características implementadas:</h4>
-                <ul>
-                    <li><strong>Sistema de filtros inteligentes:</strong> Por tipo de superficie, nivel de jugador, marca</li>
-                    <li><strong>Diseño 100% responsive:</strong> Mobile-first approach</li>
-                    <li><strong>SEO optimizado:</strong> Para cada producto y categoría</li>
-                    <li><strong>Panel administrativo:</strong> Gestión simplificada de inventario</li>
-                    <li><strong>Checkout optimizado:</strong> Conversión aumentada en 35%</li>
-                </ul>
-            </div>
-            <div class="modal-stats">
-                <div class="stat">
-                    <span class="stat-number">+35%</span>
-                    <span class="stat-label">Conversiones</span>
-                </div>
-                <div class="stat">
-                    <span class="stat-number">2.1s</span>
-                    <span class="stat-label">Tiempo carga</span>
-                </div>
-                <div class="stat">
-                    <span class="stat-number">50+</span>
-                    <span class="stat-label">Productos</span>
-                </div>
-            </div>
-        `,
-        
-        'reportes': `
-            <h3>Sistema de Análisis de Ventas</h3>
-            <div class="modal-gallery">
-                <div class="two-images">
-                    <div>
-                        <img src="img/screencapture-127-0-0-1-5000-2025-12-04-20_28_02.png" 
-                             alt="Dashboard de reportes"
-                             class="zoomable-image">
-                        <p class="gallery-caption">Dashboard principal - Métricas y gráficos interactivos</p>
-                    </div>
-                    <div>
-                        <img src="img/screencapture-127-0-0-1-5000-reporte-2025-12-04-20_28_35.png" 
-                             alt="Generador de reportes"
-                             class="zoomable-image">
-                        <p class="gallery-caption">Generador de reportes - Filtros avanzados y personalización</p>
-                    </div>
-                </div>
-            </div>
-            <div class="project-description">
-                <h4>Tecnologías utilizadas:</h4>
-                <ul>
-                    <li><strong>Python 3.9+</strong> con Tkinter para interfaz gráfica</li>
-                    <li><strong>MySQL</strong> para almacenamiento de datos de ventas</li>
-                    <li><strong>Matplotlib & Pandas</strong> para gráficos y análisis</li>
-                    <li><strong>ReportLab</strong> para generación automática de PDFs</li>
-                    <li><strong>CRUD completo</strong> de productos, ventas y usuarios</li>
-                    <li><strong>Automatización</strong> de reportes semanales/mensuales</li>
-                </ul>
-            </div>
-            <div class="modal-stats">
-                <div class="stat">
-                    <span class="stat-number">10h</span>
-                    <span class="stat-label">Ahorro semanal</span>
-                </div>
-                <div class="stat">
-                    <span class="stat-number">99.8%</span>
-                    <span class="stat-label">Precisión datos</span>
-                </div>
-                <div class="stat">
-                    <span class="stat-number">1-click</span>
-                    <span class="stat-label">Reportes PDF</span>
-                </div>
-            </div>
-            <div class="github-link">
-                <a href="https://github.com/bracvo/flask-ventas" target="_blank" class="btn btn-outline">
-                    <i class="fab fa-github"></i> Ver código en GitHub
-                </a>
-            </div>
-        `,
-        
-        'mapa': `
-            <h3> Mapa de Inundaciones CDMX</h3>
-            <div class="modal-gallery">
-                <div class="one-image">
-                    <img src="img/screencapture-127-0-0-1-5500-index-html-2025-12-04-20_30_55.png" 
-                         alt="Mapa interactivo de CDMX"
-                         class="zoomable-image">
-                </div>
-                <p class="gallery-caption">Mapa interactivo - Zonas de riesgo y red de alcantarillado</p>
-            </div>
-            <div class="project-description">
-                <h4> Funcionalidades del sistema:</h4>
-                <ul>
-                    <li><strong>Análisis geoespacial:</strong> Capacidad de drenaje por zona</li>
-                    <li><strong>Visualización interactiva:</strong> Red de alcantarillado</li>
-                    <li><strong>Sistema de alertas tempranas:</strong> Basado en pronóstico de lluvias</li>
-                    <li><strong>Dashboard administrativo:</strong> Monitoreo en tiempo real</li>
-                    <li><strong>Modelado predictivo:</strong> Identificación de zonas críticas</li>
-                    <li><strong>Base de datos espacial:</strong> Histórico de 10+ años</li>
-                </ul>
-            </div>
-            <div class="modal-stats">
-                <div class="stat">
-                    <span class="stat-number">50+</span>
-                    <span class="stat-label">Zonas monitoreadas</span>
-                </div>
-                <div class="stat">
-                    <span class="stat-number">40%</span>
-                    <span class="stat-label">Menos tiempo respuesta</span>
-                </div>
-                <div class="stat">
-                    <span class="stat-number">85%</span>
-                    <span class="stat-label">Precisión alertas</span>
-                </div>
-            </div>
-            <div class="security-note">
-                <p><i class="fas fa-shield-alt"></i> <strong>Nota:</strong> Por contener datos sensibles, solo el código base está disponible públicamente.</p>
-                <a href="https://github.com/bracvo/CDMX-Sewer-and-Green-Areas-System" target="_blank" class="btn btn-secondary">
-                    <i class="fab fa-github"></i> Ver código base
-                </a>
-            </div>
-        `
-    };
-    
     // Crear estructura del modal
     const modalHTML = `
         <div id="project-modal" class="project-modal">
@@ -926,66 +783,8 @@ function initImageZoom() {
                     translateY = 0;
                     updateImageTransform();
                     break;
-                case 'r': // Reset con R
-                    e.preventDefault();
-                    currentScale = 1;
-                    translateX = 0;
-                    translateY = 0;
-                    updateImageTransform();
-                    break;
             }
         }
-    });
-    
-    // Touch para móviles
-    let touchStartDistance = 0;
-    
-    zoomOverlay.addEventListener('touchstart', function(e) {
-        if (e.touches.length === 2) {
-            // Pinch to zoom
-            touchStartDistance = Math.hypot(
-                e.touches[0].clientX - e.touches[1].clientX,
-                e.touches[0].clientY - e.touches[1].clientY
-            );
-        } else if (e.touches.length === 1 && currentScale > 1) {
-            // Drag con un dedo
-            startDrag({
-                clientX: e.touches[0].clientX,
-                clientY: e.touches[0].clientY
-            });
-        }
-    }, { passive: false });
-    
-    zoomOverlay.addEventListener('touchmove', function(e) {
-        if (e.touches.length === 2 && touchStartDistance !== 0) {
-            e.preventDefault();
-            const currentDistance = Math.hypot(
-                e.touches[0].clientX - e.touches[1].clientX,
-                e.touches[0].clientY - e.touches[1].clientY
-            );
-            
-            const scaleChange = currentDistance / touchStartDistance;
-            if (scaleChange > 1.1) {
-                currentScale = Math.min(5, currentScale + 0.25);
-                touchStartDistance = currentDistance;
-                updateImageTransform();
-            } else if (scaleChange < 0.9) {
-                currentScale = Math.max(0.5, currentScale - 0.25);
-                touchStartDistance = currentDistance;
-                updateImageTransform();
-            }
-        } else if (e.touches.length === 1 && isDragging) {
-            e.preventDefault();
-            drag({
-                clientX: e.touches[0].clientX,
-                clientY: e.touches[0].clientY
-            });
-        }
-    }, { passive: false });
-    
-    zoomOverlay.addEventListener('touchend', function() {
-        touchStartDistance = 0;
-        stopDrag();
     });
     
     // Ensamblar y agregar al DOM
@@ -1007,77 +806,214 @@ function setupContactForm() {
         return;
     }
     
+    console.log('📝 Configurando formulario de contacto...');
+    
     // Quitar acciones por defecto
     contactForm.removeAttribute('action');
     contactForm.removeAttribute('method');
     contactForm.setAttribute('novalidate', 'true');
     
-    // Configurar evento submit
+    // Cargar EmailJS al cargar el formulario
+    loadEmailJSSDK();
+    
     contactForm.addEventListener('submit', async function(e) {
         e.preventDefault();
+        e.stopPropagation();
         
-        // Validar formulario
+        console.log('🔄 Formulario enviado - Iniciando proceso...');
+        
+        // 1. Validación
         if (!validateContactForm()) {
+            console.log('❌ Validación fallida');
             return;
         }
         
-        // Mostrar estado de carga
-        const submitBtn = this.querySelector('button[type="submit"]');
-        const originalText = submitBtn.innerHTML;
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
-        submitBtn.disabled = true;
-        
-        // Preparar datos
+        // 2. Preparar datos
         const formData = {
             name: document.getElementById('name').value.trim(),
             email: document.getElementById('email').value.trim(),
             subject: document.getElementById('subject').value,
             message: document.getElementById('message').value.trim(),
-            date: new Date().toLocaleString('es-MX', {
-                weekday: 'long',
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            })
+            date: new Date().toLocaleString('es-MX')
+            // ⚠️ IMPORTANTE: NO incluir to_email ni reply_to (tu template no los usa)
         };
         
-        console.log('📤 Datos del formulario:', formData);
+        console.log('📊 Datos del formulario:', formData);
+        console.log('✅ Variables que tu template espera: name, email, subject, message, date');
         
-        // Enviar con EmailJS si está disponible
-        if (typeof emailjs !== 'undefined' && window.EMAILJS_READY) {
-            try {
-                const response = await emailjs.send(
-                    EMAILJS_CONFIG.SERVICE_ID,
-                    EMAILJS_CONFIG.TEMPLATE_ID,
-                    formData
-                );
-                
-                if (response.status === 200) {
-                    showNotification('success', '✅ ¡Mensaje enviado! Te contactaré pronto.');
-                    contactForm.reset();
-                }
-            } catch (error) {
-                console.error('❌ Error EmailJS:', error);
-                showNotification('error', '⚠️ Error al enviar. Intenta nuevamente.');
-            }
-        } else {
-            // Fallback si EmailJS no está disponible
-            console.log('EmailJS no disponible, mostrando simulación');
-            showNotification('success', '✅ ¡Mensaje enviado! (modo simulación)');
-            contactForm.reset();
+        // 3. Mostrar loading
+        const submitBtn = this.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
+        submitBtn.disabled = true;
+        
+        // 4. Intentar enviar con EmailJS
+        try {
+            await sendWithEmailJS(formData);
+        } catch (error) {
+            console.error('❌ Error en envío:', error);
+            showNotification('error', '❌ Error al enviar. Intenta nuevamente.');
+        } finally {
+            // Restaurar botón
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
         }
-        
-        // Restaurar botón
-        submitBtn.innerHTML = originalText;
-        submitBtn.disabled = false;
     });
-    
-    console.log('✅ Formulario de contacto configurado');
 }
 
-// Validar formulario
+// ============================================
+// 8. CARGAR EMAILJS SDK
+// ============================================
+function loadEmailJSSDK() {
+    console.log('🔧 Iniciando carga de EmailJS...');
+    
+    // Si ya está cargado
+    if (typeof emailjs !== 'undefined') {
+        console.log('✅ EmailJS ya está cargado en la página');
+        initializeEmailJS();
+        return;
+    }
+    
+    // Verificar si ya hay un script cargando
+    if (document.querySelector('script[src*="email.min.js"]')) {
+        console.log('📥 EmailJS ya se está cargando...');
+        return;
+    }
+    
+    console.log('📥 Cargando EmailJS SDK desde CDN...');
+    
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js';
+    
+    script.onload = function() {
+        console.log('✅ EmailJS SDK cargado exitosamente');
+        EMAILJS_LOADED = true;
+        initializeEmailJS();
+    };
+    
+    script.onerror = function(error) {
+        console.error('❌ ERROR crítico al cargar EmailJS:', error);
+        showNotification('error', '❌ Error al cargar servicio de email. Verifica tu conexión.');
+    };
+    
+    document.head.appendChild(script);
+}
+
+// ============================================
+// INICIALIZAR EMAILJS CON VERIFICACIÓN
+// ============================================
+function initializeEmailJS() {
+    console.log('🔄 Inicializando EmailJS...');
+    
+    if (typeof emailjs === 'undefined') {
+        console.error('❌ EmailJS no está definido después de cargar');
+        return;
+    }
+    
+    if (!EMAILJS_CONFIG.PUBLIC_KEY) {
+        console.error('❌ Public Key no configurada');
+        return;
+    }
+    
+    try {
+        emailjs.init(EMAILJS_CONFIG.PUBLIC_KEY);
+        EMAILJS_INITIALIZED = true;
+        
+        console.log('✅ EmailJS inicializado correctamente');
+        console.log('🔑 Public Key:', EMAILJS_CONFIG.PUBLIC_KEY.substring(0, 10) + '...');
+        console.log('🏷️ Service ID:', EMAILJS_CONFIG.SERVICE_ID);
+        console.log('📄 Template ID:', EMAILJS_CONFIG.TEMPLATE_ID);
+        
+    } catch (error) {
+        console.error('❌ ERROR al inicializar EmailJS:', error);
+    }
+}
+
+// ============================================
+// ENVIAR CON EMAILJS (VERSIÓN CORREGIDA)
+// ============================================
+async function sendWithEmailJS(formData) {
+    console.log('📧 Intentando enviar con EmailJS...');
+    
+    // Verificar que EmailJS esté listo
+    if (typeof emailjs === 'undefined') {
+        throw new Error('EmailJS no está cargado');
+    }
+    
+    if (!EMAILJS_INITIALIZED) {
+        throw new Error('EmailJS no está inicializado');
+    }
+    
+    console.log('🔍 Verificando credenciales:');
+    console.log('- Service ID:', EMAILJS_CONFIG.SERVICE_ID);
+    console.log('- Template ID:', EMAILJS_CONFIG.TEMPLATE_ID);
+    
+    // ⚠️ IMPORTANTE: SOLO las 5 variables que tu template usa
+    // Según tu template HTML, solo estas variables:
+    const templateParams = {
+        name: formData.name,
+        email: formData.email,
+        subject: formData.subject,
+        message: formData.message,
+        date: formData.date
+        // ❌ NO incluyas: to_email, reply_to (tu template no los usa)
+    };
+    
+    console.log('📤 Enviando con parámetros:', templateParams);
+    console.log('✅ Variables exactas: name, email, subject, message, date');
+    
+    try {
+        const response = await emailjs.send(
+            EMAILJS_CONFIG.SERVICE_ID,
+            EMAILJS_CONFIG.TEMPLATE_ID,
+            templateParams
+        );
+        
+        console.log('✅ ÉXITO - Email enviado:', response);
+        
+        if (response.status === 200) {
+            showNotification('success', '🎉 ¡Mensaje enviado! Te contactaré pronto.');
+            document.getElementById('contactForm').reset();
+            return response;
+        } else {
+            throw new Error(`Estado ${response.status}: ${response.text}`);
+        }
+        
+    } catch (error) {
+        console.error('❌ ERROR EmailJS:', error);
+        
+        // Análisis específico
+        if (error.status === 412) {
+            console.log('🛠️ ERROR 412 - Precondition Failed');
+            console.log('📋 Problema: Variables incorrectas o faltantes');
+            console.log('✅ Solución: Tu template solo usa: name, email, subject, message, date');
+            console.log('❌ NO uses: to_email, reply_to');
+            
+            showNotification('error', '❌ Error de configuración. Variables incorrectas.');
+        } else if (error.text) {
+            console.log('📄 Error text:', error.text);
+            
+            // Mensajes comunes de error
+            if (error.text.includes('Invalid template ID')) {
+                showNotification('error', '❌ Template ID incorrecto. Verifica en EmailJS.');
+            } else if (error.text.includes('Invalid service ID')) {
+                showNotification('error', '❌ Service ID incorrecto. Verifica en EmailJS.');
+            } else if (error.text.includes('Invalid public key')) {
+                showNotification('error', '❌ Public Key incorrecta. Verifica en EmailJS.');
+            } else {
+                showNotification('error', '❌ Error: ' + error.text);
+            }
+        } else {
+            showNotification('error', '❌ Error al enviar el mensaje.');
+        }
+        
+        throw error;
+    }
+}
+
+// ============================================
+// VALIDACIÓN DEL FORMULARIO
+// ============================================
 function validateContactForm() {
     const name = document.getElementById('name');
     const email = document.getElementById('email');
@@ -1086,36 +1022,51 @@ function validateContactForm() {
     
     let isValid = true;
     
-    // Resetear estilos de error
+    // Resetear errores
     [name, email, subject, message].forEach(field => {
         field.classList.remove('error');
+        field.style.borderColor = '';
     });
     
     // Validar nombre
     if (!name.value.trim()) {
         name.classList.add('error');
+        name.style.borderColor = '#ef4444';
         showNotification('error', '⚠️ Por favor, ingresa tu nombre.');
         isValid = false;
     }
     
     // Validar email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!email.value.trim() || !emailRegex.test(email.value)) {
+    if (!email.value.trim()) {
         email.classList.add('error');
+        email.style.borderColor = '#ef4444';
+        showNotification('error', '⚠️ Por favor, ingresa tu email.');
+        isValid = false;
+    } else if (!emailRegex.test(email.value)) {
+        email.classList.add('error');
+        email.style.borderColor = '#ef4444';
         showNotification('error', '⚠️ Por favor, ingresa un email válido.');
         isValid = false;
     }
     
     // Validar asunto
-    if (!subject.value) {
+    if (!subject.value || subject.value === '') {
         subject.classList.add('error');
+        subject.style.borderColor = '#ef4444';
         showNotification('error', '⚠️ Por favor, selecciona un tipo de proyecto.');
         isValid = false;
     }
     
     // Validar mensaje
-    if (!message.value.trim() || message.value.trim().length < 10) {
+    if (!message.value.trim()) {
         message.classList.add('error');
+        message.style.borderColor = '#ef4444';
+        showNotification('error', '⚠️ Por favor, escribe tu mensaje.');
+        isValid = false;
+    } else if (message.value.trim().length < 10) {
+        message.classList.add('error');
+        message.style.borderColor = '#ef4444';
         showNotification('error', '⚠️ El mensaje debe tener al menos 10 caracteres.');
         isValid = false;
     }
@@ -1124,57 +1075,102 @@ function validateContactForm() {
 }
 
 // ============================================
-// 8. CARGAR EMAILJS SDK
+// FUNCIÓN DE PRUEBA PARA EMAILJS
 // ============================================
-function loadEmailJSSDK() {
-    // Verificar si ya está cargado
-    if (typeof emailjs !== 'undefined') {
-        window.EMAILJS_READY = true;
-        initializeEmailJS();
-        return;
+window.testEmailService = async function() {
+    console.log('🧪 INICIANDO PRUEBA DE EMAILJS');
+    console.log('================================');
+    
+    // Verificar estado
+    console.log('🔍 Estado actual:');
+    console.log('- EmailJS cargado:', typeof emailjs !== 'undefined');
+    console.log('- EmailJS inicializado:', EMAILJS_INITIALIZED);
+    console.log('- Service ID:', EMAILJS_CONFIG.SERVICE_ID);
+    console.log('- Template ID:', EMAILJS_CONFIG.TEMPLATE_ID);
+    
+    if (typeof emailjs === 'undefined') {
+        console.error('❌ EmailJS no está disponible');
+        showNotification('error', '❌ EmailJS no está cargado. Recarga la página.');
+        return false;
     }
     
-    console.log('🔧 Cargando EmailJS SDK...');
-    
-    const script = document.createElement('script');
-    script.src = 'https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js';
-    
-    script.onload = function() {
-        console.log('✅ EmailJS SDK cargado');
-        initializeEmailJS();
+    // ⚠️ SOLO las 5 variables que tu template usa
+    const testData = {
+        name: 'Christian Juárez (Prueba)',
+        email: 'bravocv90@gmail.com',
+        subject: 'Consulta de prueba',
+        message: 'Esta es una prueba del sistema de contacto. Si recibes este email, significa que EmailJS está funcionando correctamente en tu portafolio.',
+        date: new Date().toLocaleString('es-MX')
+        // ❌ NO incluyas: to_email, reply_to
     };
     
-    script.onerror = function() {
-        console.error('❌ Error al cargar EmailJS SDK');
-        showNotification('error', '⚠️ Error al cargar servicio de email. Recarga la página.');
-    };
-    
-    document.head.appendChild(script);
-}
-
-function initializeEmailJS() {
-    if (!EMAILJS_CONFIG.PUBLIC_KEY || EMAILJS_CONFIG.PUBLIC_KEY.includes('xxxx')) {
-        console.error('❌ Public Key no configurada');
-        return;
-    }
+    console.log('📤 Enviando prueba con:', testData);
+    console.log('✅ Variables enviadas: name, email, subject, message, date');
     
     try {
-        emailjs.init(EMAILJS_CONFIG.PUBLIC_KEY);
-        window.EMAILJS_READY = true;
-        console.log('✅ EmailJS inicializado');
+        console.log('🚀 Enviando prueba...');
         
-        // Hacer emailjs disponible globalmente
-        window.emailjs = emailjs;
+        const response = await emailjs.send(
+            EMAILJS_CONFIG.SERVICE_ID,
+            EMAILJS_CONFIG.TEMPLATE_ID,
+            testData
+        );
+        
+        console.log('✅ PRUEBA EXITOSA!');
+        console.log('📊 Respuesta:', {
+            status: response.status,
+            text: response.text
+        });
+        
+        showNotification('success', '✅ ¡Prueba enviada exitosamente! Revisa tu email.');
+        
+        console.log('💡 Verifica en:');
+        console.log('   - Tu bandeja de entrada');
+        console.log('   - Spam/correo no deseado');
+        console.log('   - https://dashboard.emailjs.com/admin/history');
+        
+        return true;
+        
     } catch (error) {
-        console.error('❌ Error al inicializar EmailJS:', error);
+        console.error('❌ PRUEBA FALLIDA');
+        console.error('Error completo:', error);
+        
+        if (error.status === 412) {
+            console.log('🛠️ ERROR 412 - Variables incorrectas');
+            console.log('📋 Tu template solo usa: name, email, subject, message, date');
+            console.log('❌ NO uses: to_email, reply_to');
+        }
+        
+        if (error.text) {
+            console.error('Mensaje de error:', error.text);
+        }
+        
+        showNotification('error', '❌ Prueba fallida');
+        
+        console.log('🔗 Para ayuda:');
+        console.log('1. https://dashboard.emailjs.com/admin');
+        console.log('2. Service ID: Email Services');
+        console.log('3. Template ID: Email Templates');
+        console.log('4. Public Key: Account > API Keys');
+        
+        return false;
     }
-}
+};
 
 // ============================================
-// FUNCIONES UTILITARIAS
+// FUNCIÓN PARA PROBAR ZOOM DESDE CONSOLA
 // ============================================
+window.testZoom = function() {
+    console.log('🔍 Probando sistema de zoom...');
+    openImageZoom(
+        'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&q=80',
+        'Imagen de prueba para zoom'
+    );
+};
 
-// Mostrar notificación
+// ============================================
+// MOSTRAR NOTIFICACIÓN
+// ============================================
 function showNotification(type, message) {
     // Eliminar notificaciones anteriores
     const existingNotif = document.querySelector('.notification');
@@ -1286,60 +1282,17 @@ function showNotification(type, message) {
 }
 
 // ============================================
-// FUNCIÓN DE PRUEBA PARA CONSOLA
-// ============================================
-window.testEmailService = async function() {
-    console.log('🧪 Iniciando prueba de EmailJS...');
-    
-    if (typeof emailjs === 'undefined' || !window.EMAILJS_READY) {
-        console.error('❌ EmailJS no está listo');
-        showNotification('error', 'EmailJS no está listo. Espera unos segundos.');
-        return false;
-    }
-    
-    const testData = {
-        name: 'Juan Pérez (Prueba)',
-        email: 'test@ejemplo.com',
-        subject: 'Consulta sobre proyecto',
-        message: 'Este es un mensaje de prueba enviado desde la consola. Si recibes esto, EmailJS está funcionando correctamente.',
-        date: new Date().toLocaleString('es-MX')
-    };
-    
-    try {
-        console.log('📤 Enviando prueba...');
-        const response = await emailjs.send(
-            EMAILJS_CONFIG.SERVICE_ID,
-            EMAILJS_CONFIG.TEMPLATE_ID,
-            testData
-        );
-        
-        console.log('✅ Prueba exitosa:', response);
-        showNotification('success', '✅ Prueba enviada exitosamente!');
-        return true;
-    } catch (error) {
-        console.error('❌ Prueba fallida:', error);
-        showNotification('error', '❌ Prueba fallida: ' + (error.text || 'Error desconocido'));
-        return false;
-    }
-};
-
-// ============================================
-// FUNCIÓN PARA PROBAR ZOOM DESDE CONSOLA
-// ============================================
-window.testZoom = function() {
-    console.log('🔍 Probando sistema de zoom...');
-    openImageZoom(
-        'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&q=80',
-        'Imagen de prueba para zoom'
-    );
-};
-
-// ============================================
 // INFORMACIÓN DE DIAGNÓSTICO
 // ============================================
 console.log('⚙️ Script.js cargado correctamente');
 console.log('📝 Comandos disponibles en consola:');
-console.log('   - testEmailService() → Probar EmailJS');
+console.log('   - testEmailService() → Probar EmailJS (SOLO 5 variables)');
 console.log('   - testZoom() → Probar sistema de zoom');
 console.log('   - openImageZoom(url, alt) → Abrir imagen en zoom');
-console.log('🔧 Configuración EmailJS:', EMAILJS_CONFIG);
+console.log('🔧 Configuración EmailJS:', {
+    SERVICE_ID: EMAILJS_CONFIG.SERVICE_ID,
+    TEMPLATE_ID: EMAILJS_CONFIG.TEMPLATE_ID,
+    PUBLIC_KEY: EMAILJS_CONFIG.PUBLIC_KEY ? 'Configurada' : 'NO CONFIGURADA'
+});
+console.log('✅ Variables del template: name, email, subject, message, date');
+console.log('❌ NO usar: to_email, reply_to');
