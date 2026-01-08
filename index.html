@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Christian Juárez Bravo | Desarrollador Full Stack</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navegación -->
+    <nav class="navbar">
+        <div class="container">
+            <a href="#" class="logo">C<span>J</span></a>
+            <ul class="nav-links">
+                <li><a href="#inicio">Inicio</a></li>
+                <li><a href="#servicios">Servicios</a></li>
+                <li><a href="#proyectos">Proyectos</a></li>
+                <li><a href="#habilidades">Habilidades</a></li>
+                <li><a href="#contacto">Contacto</a></li>
+            </ul>
+            <button class="menu-toggle">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Sección Hero / Inicio -->
+    <section id="inicio" class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <span> Disponible para freelance</span>
+                </div>
+                <h1 class="hero-title">Christian <span>Juárez </span></h1>
+                <p class="hero-subtitle">Desarrollador Full Stack & Solucionador Digital</p>
+                <p class="hero-text">
+                    Transformo ideas en sistemas funcionales. Especializado en desarrollo WordPress, 
+                    análisis de datos con Python, e-commerce y soluciones digitales prácticas que 
+                    generan resultados medibles para negocios.
+                </p>
+                <div class="hero-stats">
+                    <div class="stat">
+                        <span class="stat-number">50+</span>
+                        <span class="stat-label">Proyectos</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">100%</span>
+                        <span class="stat-label">Clientes Satisfechos</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">2+</span>
+                        <span class="stat-label">Años Experiencia</span>
+                    </div>
+                </div>
+                <div class="hero-buttons">
+                    <a href="#proyectos" class="btn btn-primary">
+                        <i class="fas fa-code"></i> Ver Proyectos
+                    </a>
+                    <a href="#contacto" class="btn btn-secondary">
+                        <i class="fas fa-paper-plane"></i> Contáctame
+                    </a>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="code-visual">
+                    <div class="code-header">
+                        <div class="code-dots">
+                            <span class="dot red"></span>
+                            <span class="dot yellow"></span>
+                            <span class="dot green"></span>
+                        </div>
+                        <span class="code-title">christian_jb.py</span>
+                    </div>
+                    <div class="code-content">
+                        <pre><code>class Desarrollador:
+    def __init__(self):
+        self.nombre = "Christian Juárez"
+        self.especialidad = "Full Stack"
+        self.habilidades = [
+            "WordPress", 
+            "Python", 
+            "E-commerce",
+            "Análisis de Datos",
+            "Marketing Digital"
+        ]
+    
+    def resolver_problema(self, problema):
+        solucion = self.analizar(problema)
+        return self.implementar(solucion)
+    
+    def entregar_proyecto(self):
+        return "✅ Funcional + ✅ Optimizado + ✅ A tiempo"</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección Servicios -->
+    <section id="servicios" class="services">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-label">Lo que hago</span>
+                <h2 class="section-title">Servicios Especializados</h2>
+                <p class="section-subtitle">Soluciones prácticas para problemas digitales reales</p>
+            </div>
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fab fa-wordpress"></i>
+                    </div>
+                    <h3>Desarrollo WordPress</h3>
+                    <p>Desde tiendas WooCommerce hasta sitios corporativos. Optimización, mantenimiento y soporte técnico.</p>
+                    <ul class="service-features">
+                        <li><i class="fas fa-check"></i> WooCommerce</li>
+                        <li><i class="fas fa-check"></i> Optimización</li>
+                        <li><i class="fas fa-check"></i> Migración</li>
+                        <li><i class="fas fa-check"></i> Soporte 24/7</li>
+                    </ul>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>Análisis de Datos</h3>
+                    <p>Sistemas Python para análisis de ventas, reportes automáticos y dashboards interactivos.</p>
+                    <ul class="service-features">
+                        <li><i class="fas fa-check"></i> Python + Tkinter</li>
+                        <li><i class="fas fa-check"></i> Gráficos interactivos</li>
+                        <li><i class="fas fa-check"></i> Reportes automáticos</li>
+                        <li><i class="fas fa-check"></i> MySQL</li>
+                    </ul>
+                </div>
+
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <h3>E-commerce & Productos</h3>
+                    <p>Gestión completa de catálogos, carga masiva, optimización y administración de tiendas online.</p>
+                    <ul class="service-features">
+                        <li><i class="fas fa-check"></i> Carga masiva</li>
+                        <li><i class="fas fa-check"></i> SEO productos</li>
+                        <li><i class="fas fa-check"></i> Variaciones</li>
+                        <li><i class="fas fa-check"></i> Integraciones</li>
+                    </ul>
+                </div>
+
+               
+                   
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección Proyectos -->
+    <section id="proyectos" class="projects">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-label">Portafolio</span>
+                <h2 class="section-title">Proyectos Reales</h2>
+                <p class="section-subtitle">Soluciones implementadas con resultados comprobados</p>
+            </div>
+            <div class="projects-grid">
+                <!-- Proyecto 1: Tenis -->
+                <div class="project-card">
+                    <div class="project-badge">E-commerce</div>
+                    <div class="project-image">
+                        <!-- CAMBIAR POR TU IMAGEN -->
+                        <img src="img/screencapture-127-0-0-1-5501-productos-html-2025-12-04-20_16_19.png" alt="E-commerce de Tenis">
+                       <div class="project-overlay">
+    <a href="#!" class="project-view" data-modal="tenis">
+        <!-- Para tenis -->
+        <i class="fas fa-images"></i>
+    </a>
+</div>
+                    </div>
+                    <div class="project-content">
+                        <h3>Tienda Online de Tenis</h3>
+                        <p>Tienda especializada con WooCommerce y checkout optimizado.</p>
+                        <div class="project-tech">
+                            <span>WordPress</span>
+                            <span>WooCommerce</span>
+                            <span>Elementor</span>
+                        </div>
+                        <div class="project-result">
+                            <div class="result-item">
+                                <i class="fas fa-chart-bar"></i>
+                                <span>+35% conversiones</span>
+                            </div>
+                            <div class="result-item">
+                                <i class="fas fa-bolt"></i>
+                                <span>2s carga</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Proyecto 2: Reportes -->
+                <div class="project-card">
+                    <div class="project-badge">Business Intelligence</div>
+                    <div class="project-image">
+                        <!-- CAMBIAR POR TU IMAGEN -->
+                        <img src="img/screencapture-127-0-0-1-5000-reporte-2025-12-04-20_28_35.png" alt="Sistema de Reportes">
+                        <div class="project-overlay">
+    <a href="#!" class="project-view" data-modal="reportes">
+        <i class="fas fa-images"></i>
+    </a>
+</div>
+
+                    </div>
+                    <div class="project-content">
+                        <h3>Sistema de Análisis de Ventas</h3>
+                        <p>Dashboard Python con gráficos de productos más vendidos, reportes automáticos y alertas.</p>
+                        <div class="project-tech">
+                            <span>Python</span>
+                            <span>Tkinter</span>
+                            <span>MySQL</span>
+                            <span>Matplotlib</span>
+                        </div>
+                        <div class="project-result">
+                            <div class="result-item">
+                                <i class="fas fa-clock"></i>
+                                <span>10h/semana ahorro</span>
+                            </div>
+                            <div class="result-item">
+                                <i class="fas fa-brain"></i>
+                                <span>Decisión con data</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Proyecto 3: Mapa -->
+                <div class="project-card">
+                    <div class="project-badge">Soluciones Urbanas</div>
+                    <div class="project-image">
+                        <!-- CAMBIAR POR TU IMAGEN -->
+                        <img src="img/screencapture-127-0-0-1-5500-index-html-2025-12-04-20_30_55.png" alt="Mapa de Inundaciones">
+                        <div class="project-overlay">
+    <a href="#!" class="project-view" data-modal="mapa">
+        <i class="fas fa-images"></i>
+    </a>
+</div>
+
+                    </div>
+                    <div class="project-content">
+                        <h3>Mapa de Inundaciones CDMX</h3>
+                        <p>Sistema de prevención con visualización geoespacial, análisis de riesgo y alertas tempranas.</p>
+                        <div class="project-tech">
+                            <span>Python</span>
+                            <span>GIS</span>
+                            <span>Dashboard</span>
+                            <span>MySQL</span>
+                        </div>
+                        <div class="project-result">
+                            <div class="result-item">
+                                <i class="fas fa-shield-alt"></i>
+                                <span>Prevención</span>
+                            </div>
+                            <div class="result-item">
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección Habilidades Técnicas -->
+    <section id="habilidades" class="skills">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-label">Stack tecnológico</span>
+                <h2 class="section-title">Habilidades Técnicas</h2>
+                <p class="section-subtitle">Tecnologías y herramientas que domino y aplico diariamente</p>
+            </div>
+            <div class="skills-grid">
+                <div class="skill-category">
+                    <h3><i class="fas fa-code"></i> Frontend</h3>
+                    <div class="skill-items">
+                        <div class="skill-item">
+                            <span class="skill-name">HTML5/CSS3</span>
+                            <div class="skill-bar">
+                                <div class="skill-level" style="width: 95%"></div>
+                            </div>
+                            <span class="skill-percent">95%</span>
+                        </div>
+                        <div class="skill-item">
+                            <span class="skill-name">JavaScript</span>
+                            <div class="skill-bar">
+                                <div class="skill-level" style="width: 80%"></div>
+                            </div>
+                            <span class="skill-percent">80%</span>
+                        </div>
+                        <div class="skill-item">
+                            <span class="skill-name">Responsive Design</span>
+                            <div class="skill-bar">
+                                <div class="skill-level" style="width: 90%"></div>
+                            </div>
+                            <span class="skill-percent">90%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="skill-category">
+                    <h3><i class="fas fa-server"></i> Backend & CMS</h3>
+                    <div class="skill-items">
+                        <div class="skill-item">
+                            <span class="skill-name">WordPress</span>
+                            <div class="skill-bar">
+                                <div class="skill-level" style="width: 92%"></div>
+                            </div>
+                            <span class="skill-percent">92%</span>
+                        </div>
+                        <div class="skill-item">
+                            <span class="skill-name">Python</span>
+                            <div class="skill-bar">
+                                <div class="skill-level" style="width: 85%"></div>
+                            </div>
+                            <span class="skill-percent">85%</span>
+                        </div>
+                        <div class="skill-item">
+                            <span class="skill-name">PHP</span>
+                            <div class="skill-bar">
+                                <div class="skill-level" style="width: 75%"></div>
+                            </div>
+                            <span class="skill-percent">75%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="skill-category">
+                    <h3><i class="fas fa-database"></i> Bases de Datos</h3>
+                    <div class="skill-items">
+                        <div class="skill-item">
+                            <span class="skill-name">MySQL</span>
+                            <div class="skill-bar">
+                                <div class="skill-level" style="width: 88%"></div>
+                            </div>
+                            <span class="skill-percent">88%</span>
+                        </div>
+                        <div class="skill-item">
+                            <span class="skill-name">WooCommerce</span>
+                            <div class="skill-bar">
+                                <div class="skill-level" style="width: 90%"></div>
+                            </div>
+                            <span class="skill-percent">90%</span>
+                        </div>
+                        <div class="skill-item">
+                            <span class="skill-name">Data Analysis</span>
+                            <div class="skill-bar">
+                                <div class="skill-level" style="width: 82%"></div>
+                            </div>
+                            <span class="skill-percent">82%</span>
+                        </div>
+                    </div>
+                </div>
+
+                
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección Contacto -->
+    <section id="contacto" class="contact">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-label">Trabajemos juntos</span>
+                <h2 class="section-title">Contacto</h2>
+                <p class="section-subtitle">¿Tienes un proyecto? Hablemos sobre cómo puedo ayudarte</p>
+            </div>
+            <div class="contact-container">
+                <div class="contact-info">
+                    <h3>Información de contacto</h3>
+                    <p class="contact-description">
+                        Disponible para proyectos freelance, colaboraciones a largo plazo 
+                        y consultorías técnicas. Respuesta garantizada en menos de 24 horas.
+                    </p>
+                    
+                    <div class="contact-details">
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <div>
+                                <h4>Email</h4>
+                                <!-- CAMBIAR POR TU EMAIL -->
+                                <p>bravocv90@gmail.com</p>
+                            </div>
+                        </div>
+                        
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <i class="fas fa-language"></i>
+                            </div>
+                            <div>
+                                <h4>Idiomas</h4>
+                                <p>Español (Nativo) • Inglés (Profesional)</p>
+                            </div>
+                        </div>
+                        
+                        <div class="contact-item">
+                            <div class="contact-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div>
+                                <h4>Disponibilidad</h4>
+                                <p>Freelance • Tiempo designado • Por proyecto</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-platforms">
+                        <h4>Encuéntrame en:</h4>
+                        <div class="platform-buttons">
+                            <!-- CAMBIAR POR TUS LINKS -->
+                            <a href="https://github.com/bracvo" class="platform-btn">
+                                <i class="fab fa-github"></i> GitHub
+                            </a>
+                            <a href="https://www.workana.com/freelancer/845dd5d53fba0cab9a46fe0c50df282d" class="platform-btn">
+        <i class="fas fa-briefcase"></i> Workana
+    </a>
+                            <a href="https://wa.me/5621495902?text=Hola%20Christian,%20vi%20tu%20portafolio%20y%20me%20gustaría%20cotizar%20un%20proyecto." class="platform-btn">
+                                <i class="fab fa-whatsapp"></i> WhatsApp
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="contact-form-container">
+<form id="contactForm" class="contact-form">
+    
+    <div class="form-group">
+        <label for="name">Nombre completo *</label>
+        <input type="text" id="name" name="name" placeholder="Tu nombre" required>
+    </div>
+    
+    <div class="form-group">
+        <label for="email">Email *</label>
+        <input type="email" id="email" name="email" placeholder="tu@email.com" required>
+    </div>
+    
+    <div class="form-group">
+        <label for="subject">Tipo de proyecto *</label>
+        <select id="subject" name="subject" required>
+            <option value="" disabled selected>Selecciona una opción</option>
+            <option value="wordpress">Desarrollo WordPress</option>
+            <option value="ecommerce">Tienda Online</option>
+            <option value="python">Sistema Python</option>
+            <option value="otro">Otro</option>
+        </select>
+    </div>
+    
+    <div class="form-group">
+        <label for="message">Detalles del proyecto *</label>
+        <textarea id="message" name="message" rows="5" placeholder="Describe tu proyecto, necesidades y presupuesto aproximado..." required></textarea>
+    </div>
+    
+    <button type="submit" class="btn btn-primary btn-block">
+        <i class="fas fa-paper-plane"></i> Enviar mensaje
+    </button>
+    
+    <p class="form-note">
+        <i class="fas fa-lock"></i> Mensaje encriptado y seguro.
+    </p>
+</form>
+
+<div id="notification" style="display: none;"></div>
+</div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <a href="#" class="logo">C<span>JB</span></a>
+                    <p>Desarrollador Full Stack especializado en soluciones digitales prácticas y efectivas.</p>
+                    <div class="footer-social">
+                        <a href="#"><i class="fab fa-github"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-whatsapp"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-links">
+                    <h4>Servicios</h4>
+                    <ul>
+                        <li><a href="#servicios">Desarrollo WordPress</a></li>
+                        <li><a href="#servicios">Análisis de Datos</a></li>
+                        <li><a href="#servicios">E-commerce</a></li>
+                        <li><a href="#servicios">Diseño & Multimedia</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-links">
+                    <h4>Enlaces</h4>
+                    <ul>
+                        <li><a href="#inicio">Inicio</a></li>
+                        <li><a href="#proyectos">Proyectos</a></li>
+                        <li><a href="#habilidades">Habilidades</a></li>
+                        <li><a href="#contacto">Contacto</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-cta">
+                    <h4>¿Listo para comenzar?</h4>
+                    <p>Contáctame y hablemos sobre tu proyecto.</p>
+                    <a href="#contacto" class="btn btn-outline">
+                        <i class="fas fa-rocket"></i> Iniciar proyecto
+                    </a>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; Christian Juárez Bravo. Todos los derechos reservados.</p>
+                <p class="footer-location">
+                    <i class="fas fa-map-marker-alt"></i> México • Disponible para proyectos remotos
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="script.js"></script>
+</body>
+</html>
