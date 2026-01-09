@@ -1075,88 +1075,123 @@ function validateContactForm() {
 }
 
 // ============================================
-// FUNCIÓN DE PRUEBA PARA EMAILJS
+// ENVIAR CON EMAILJS (VERSIÓN CORREGIDA - REEMPLAZA TODO)
 // ============================================
-window.testEmailService = async function() {
-    console.log('🧪 INICIANDO PRUEBA DE EMAILJS');
-    console.log('================================');
-    
-    // Verificar estado
-    console.log('🔍 Estado actual:');
-    console.log('- EmailJS cargado:', typeof emailjs !== 'undefined');
-    console.log('- EmailJS inicializado:', EMAILJS_INITIALIZED);
-    console.log('- Service ID:', EMAILJS_CONFIG.SERVICE_ID);
-    console.log('- Template ID:', EMAILJS_CONFIG.TEMPLATE_ID);
+async function sendWithEmailJS(formData) {
+    console.log('📧 ENVÍO ULTIMATUM - EmailJS...');
     
     if (typeof emailjs === 'undefined') {
-        console.error('❌ EmailJS no está disponible');
-        showNotification('error', '❌ EmailJS no está cargado. Recarga la página.');
-        return false;
+        throw new Error('EmailJS no está cargado');
     }
     
-    // ⚠️ SOLO las 5 variables que tu template usa
-    const testData = {
-        name: 'Christian Juárez (Prueba)',
-        email: 'bravocv90@gmail.com',
-        subject: 'Consulta de prueba',
-        message: 'Esta es una prueba del sistema de contacto. Si recibes este email, significa que EmailJS está funcionando correctamente en tu portafolio.',
-        date: new Date().toLocaleString('es-MX')
-        // ❌ NO incluyas: to_email, reply_to
+    if (!EMAILJS_INITIALIZED) {
+        throw new Error('EmailJS no está inicializado');
+    }
+    
+    console.log('🔍 Verificando todo:');
+    console.log('- Service ID:', EMAILJS_CONFIG.SERVICE_ID);
+    console.log('- Template ID:', EMAILJS_CONFIG.TEMPLATE_ID);
+    console.log('- EmailJS listo:', typeof emailjs.send === 'function');
+    
+    // ⚠️ PRUEBA 1: Variables EXACTAS como en tu template
+    const templateParams = {
+        name: String(formData.name || '').trim(),
+        email: String(formData.email || '').trim(),
+        subject: String(formData.subject || '').trim(),
+        message: String(formData.message || '').trim(),
+        date: String(formData.date || new Date().toLocaleString('es-MX'))
     };
     
-    console.log('📤 Enviando prueba con:', testData);
-    console.log('✅ Variables enviadas: name, email, subject, message, date');
+    console.log('📤 Enviando con:', templateParams);
+    console.log('✅ Template espera: name, email, subject, message, date');
     
     try {
-        console.log('🚀 Enviando prueba...');
+        console.log('🚀 Intento 1: Enviando...');
         
         const response = await emailjs.send(
             EMAILJS_CONFIG.SERVICE_ID,
             EMAILJS_CONFIG.TEMPLATE_ID,
-            testData
+            templateParams
         );
         
-        console.log('✅ PRUEBA EXITOSA!');
-        console.log('📊 Respuesta:', {
+        console.log('✅ ÉXITO COMPLETO:', {
             status: response.status,
             text: response.text
         });
         
-        showNotification('success', '✅ ¡Prueba enviada exitosamente! Revisa tu email.');
+        showNotification('success', '🎉 ¡Mensaje enviado! Te contactaré pronto.');
+        document.getElementById('contactForm').reset();
         
-        console.log('💡 Verifica en:');
-        console.log('   - Tu bandeja de entrada');
-        console.log('   - Spam/correo no deseado');
-        console.log('   - https://dashboard.emailjs.com/admin/history');
-        
-        return true;
+        return response;
         
     } catch (error) {
-        console.error('❌ PRUEBA FALLIDA');
-        console.error('Error completo:', error);
+        console.error('❌ ERROR 412:', error);
         
-        if (error.status === 412) {
-            console.log('🛠️ ERROR 412 - Variables incorrectas');
-            console.log('📋 Tu template solo usa: name, email, subject, message, date');
-            console.log('❌ NO uses: to_email, reply_to');
+        // PRUEBA 2: Con valores MÁS SIMPLES
+        console.log('🔄 Intento 2: Con valores simples...');
+        
+        const simpleParams = {
+            name: 'Test User',
+            email: 'test@example.com',
+            subject: 'Test Subject',
+            message: 'Test message',
+            date: '2026-01-09'
+        };
+        
+        try {
+            const response2 = await emailjs.send(
+                EMAILJS_CONFIG.SERVICE_ID,
+                EMAILJS_CONFIG.TEMPLATE_ID,
+                simpleParams
+            );
+            
+            console.log('✅ ÉXITO con valores simples:', response2);
+            showNotification('success', '🎉 ¡Mensaje enviado! (modo prueba simple)');
+            document.getElementById('contactForm').reset();
+            return response2;
+            
+        } catch (error2) {
+            console.error('❌ ERROR también con valores simples:', error2);
+            
+            // DIAGNÓSTICO COMPLETO
+            console.log('💀 DIAGNÓSTICO FINAL:');
+            console.log('1. Error status:', error2.status);
+            console.log('2. Error text:', error2.text);
+            console.log('3. Service ID:', EMAILJS_CONFIG.SERVICE_ID);
+            console.log('4. Template ID:', EMAILJS_CONFIG.TEMPLATE_ID);
+            console.log('5. Variables usadas:', Object.keys(simpleParams));
+            
+            // Verificar en el dashboard
+            console.log('🔗 Verifica en:');
+            console.log('- https://dashboard.emailjs.com/admin/history');
+            console.log('- https://dashboard.emailjs.com/admin/test');
+            
+            if (error2.status === 412) {
+                showNotification('error', '❌ Error 412: Problema con el template. Verifica las variables {{ }} en EmailJS.');
+            } else if (error2.text) {
+                showNotification('error', '❌ Error: ' + error2.text);
+            } else {
+                showNotification('error', '❌ Error desconocido. Verifica la consola.');
+            }
+            
+            // Mostrar alerta con ayuda
+            setTimeout(() => {
+                alert('⚠️ PROBLEMA CON EMAILJS\n\n' +
+                      '1. Ve a: https://dashboard.emailjs.com/admin/templates\n' +
+                      '2. Haz clic en template_dcoedw6\n' +
+                      '3. Verifica que las variables sean EXACTAMENTE:\n' +
+                      '   - {{name}}\n' +
+                      '   - {{email}}\n' +
+                      '   - {{subject}}\n' +
+                      '   - {{message}}\n' +
+                      '   - {{date}}\n\n' +
+                      '4. Prueba desde: https://dashboard.emailjs.com/admin/test');
+            }, 1000);
+            
+            throw error2;
         }
-        
-        if (error.text) {
-            console.error('Mensaje de error:', error.text);
-        }
-        
-        showNotification('error', '❌ Prueba fallida');
-        
-        console.log('🔗 Para ayuda:');
-        console.log('1. https://dashboard.emailjs.com/admin');
-        console.log('2. Service ID: Email Services');
-        console.log('3. Template ID: Email Templates');
-        console.log('4. Public Key: Account > API Keys');
-        
-        return false;
     }
-};
-
+}
 // ============================================
 // FUNCIÓN PARA PROBAR ZOOM DESDE CONSOLA
 // ============================================
