@@ -242,7 +242,7 @@ function openProjectModal(modalType) {
     // Contenido predefinido
     const modalContent = {
         'tenis': {
-            title: '🎾 Tienda Online de Tenis',
+            title: ' Tienda Online de Tenis',
             content: `
                 <div class="modal-gallery">
                     <div class="two-images">
@@ -261,7 +261,7 @@ function openProjectModal(modalType) {
                     </div>
                 </div>
                 <div class="project-description">
-                    <h4>✨ Características:</h4>
+                    <h4> Características:</h4>
                     <ul>
                         <li>Sistema de filtros inteligentes</li>
                         <li>Diseño 100% responsive</li>
@@ -272,7 +272,7 @@ function openProjectModal(modalType) {
             `
         },
         'reportes': {
-            title: '📊 Sistema de Análisis de Ventas',
+            title: ' Sistema de Análisis de Ventas',
             content: `
                 <div class="modal-gallery">
                     <div class="two-images">
@@ -291,7 +291,7 @@ function openProjectModal(modalType) {
                     </div>
                 </div>
                 <div class="project-description">
-                    <h4>⚙️ Tecnologías:</h4>
+                    <h4> Tecnologías:</h4>
                     <ul>
                         <li>Python 3.9+ con Tkinter</li>
                         <li>MySQL para almacenamiento</li>
@@ -302,7 +302,7 @@ function openProjectModal(modalType) {
             `
         },
         'mapa': {
-            title: '🗺️ Mapa de Inundaciones CDMX',
+            title: ' Mapa de Inundaciones CDMX',
             content: `
                 <div class="modal-gallery">
                     <div class="one-image">
@@ -313,7 +313,7 @@ function openProjectModal(modalType) {
                     <p class="gallery-caption">Mapa interactivo - Zonas de riesgo</p>
                 </div>
                 <div class="project-description">
-                    <h4>🎯 Funcionalidades:</h4>
+                    <h4> Funcionalidades:</h4>
                     <ul>
                         <li>Análisis geoespacial</li>
                         <li>Visualización interactiva</li>
@@ -851,8 +851,8 @@ function setupContactForm() {
         try {
             await sendWithEmailJS(formData);
         } catch (error) {
-            console.error('❌ Error en envío:', error);
-            showNotification('error', '❌ Error al enviar. Intenta nuevamente.');
+            console.error(' Error en envío:', error);
+            showNotification('error', ' Error al enviar. Intenta nuevamente.');
         } finally {
             // Restaurar botón
             submitBtn.innerHTML = originalText;
@@ -886,7 +886,7 @@ function loadEmailJSSDK() {
     script.src = 'https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js';
     
     script.onload = function() {
-        console.log('✅ EmailJS SDK cargado exitosamente');
+        console.log(' EmailJS SDK cargado exitosamente');
         EMAILJS_LOADED = true;
         initializeEmailJS();
     };
@@ -948,19 +948,16 @@ async function sendWithEmailJS(formData) {
     console.log('- Service ID:', EMAILJS_CONFIG.SERVICE_ID);
     console.log('- Template ID:', EMAILJS_CONFIG.TEMPLATE_ID);
     
-    // ⚠️ IMPORTANTE: SOLO las 5 variables que tu template usa
-    // Según tu template HTML, solo estas variables:
     const templateParams = {
         name: formData.name,
         email: formData.email,
         subject: formData.subject,
         message: formData.message,
         date: formData.date
-        // ❌ NO incluyas: to_email, reply_to (tu template no los usa)
     };
     
-    console.log('📤 Enviando con parámetros:', templateParams);
-    console.log('✅ Variables exactas: name, email, subject, message, date');
+    console.log(' Enviando con parámetros:', templateParams);
+    console.log(' Variables exactas: name, email, subject, message, date');
     
     try {
         const response = await emailjs.send(
@@ -969,10 +966,10 @@ async function sendWithEmailJS(formData) {
             templateParams
         );
         
-        console.log('✅ ÉXITO - Email enviado:', response);
+        console.log(' ÉXITO - Email enviado:', response);
         
         if (response.status === 200) {
-            showNotification('success', '🎉 ¡Mensaje enviado! Te contactaré pronto.');
+            showNotification('success', ' ¡Mensaje enviado! Te contactaré pronto.');
             document.getElementById('contactForm').reset();
             return response;
         } else {
@@ -1001,10 +998,10 @@ async function sendWithEmailJS(formData) {
             } else if (error.text.includes('Invalid public key')) {
                 showNotification('error', '❌ Public Key incorrecta. Verifica en EmailJS.');
             } else {
-                showNotification('error', '❌ Error: ' + error.text);
+                showNotification('error', ' Error: ' + error.text);
             }
         } else {
-            showNotification('error', '❌ Error al enviar el mensaje.');
+            showNotification('error', ' Error al enviar el mensaje.');
         }
         
         throw error;
